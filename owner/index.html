@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Owner Ultra</title>
+    <link rel="stylesheet" href="/owner/owner.css">
+</head>
+<body>
+    <main class="owner-shell">
+        <section class="owner-card">
+            <div class="owner-brand">
+                <img src="/GENERAL/logo-ultrasoft.svg" alt="Ultra">
+                <div>
+                    <span>Acceso privado</span>
+                    <h1>Owner Ultra</h1>
+                </div>
+            </div>
+
+            <p class="owner-intro">
+                Esta vista es independiente del panel administrativo del cliente. Desde aquí puedes controlar el estado público del sitio.
+            </p>
+
+            <form id="ownerLicenseForm" class="owner-form">
+                <label>
+                    Estado del sitio
+                    <select name="status">
+                        <option value="active">Activo</option>
+                        <option value="maintenance">Mantenimiento</option>
+                        <option value="suspended">Suspendido</option>
+                    </select>
+                </label>
+
+                <label>
+                    Título público
+                    <input name="title" placeholder="Servicio temporalmente no disponible">
+                </label>
+
+                <label>
+                    Mensaje público
+                    <textarea name="message" rows="4" placeholder="Estamos realizando ajustes. Volveremos pronto."></textarea>
+                </label>
+
+                <div class="owner-actions">
+                    <button type="submit">Guardar estado</button>
+                    <a href="/" target="_blank" rel="noopener">Ver sitio</a>
+                    <button type="button" class="ghost" id="ownerLogout">Cerrar sesión</button>
+                </div>
+
+                <div id="ownerMessage" class="owner-message" role="status"></div>
+            </form>
+        </section>
+    </main>
+
+    <script src="/owner/owner.js"></script>
+</body>
+</html>

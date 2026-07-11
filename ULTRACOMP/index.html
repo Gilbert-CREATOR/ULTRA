@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultracomp</title>
+    <link rel="stylesheet" href="/GENERAL/ultra.css?v=20260708-fix-layout">
+    <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css?v=20260708-fix-layout">
+    <link rel="stylesheet" href="/ULTRACOMP/inicio.css?v=20260709-section-layout-fix">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css?v=20260708-fix-layout">
+    <link rel="stylesheet" href="/GENERAL/scroll-testimonials.css?v=20260708-fix-layout">
+    <script type="module" src="/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body class="ultracomp-home">
+    <header>
+
+        <div class="container">
+
+            <nav>
+
+                <a class="nav-brand" href="/ULTRACOMP/index.html">
+                    <img src="/GENERAL/logo-ultrasoft.svg" alt="" class="ultrasoft-logo">
+                    <span>ULTRACOMP</span>
+                </a>
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Abrir menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="nav-links" id="primaryNavigation">
+
+                    <a href="/ULTRACOMP/index.html">
+                        Ultracomp
+                    </a>
+
+                    <a href="/ULTRASOFT/ultrasoft.html">
+                        Ultrasoft
+                    </a>
+
+                    <a href="/mi-cotizacion" class="quote-cart-button">
+                        Mi cotización <span id="quoteCartCounter"></span>
+                    </a>
+
+                </div>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <section class="hero home-hero reveal">
+        <div class="container">
+                <div class="home-hero-copy">
+                    <h1>Tu destino para equipos y componentes confiables.</h1>
+                    <p>Computadoras, periféricos y soluciones tecnológicas para empresas, profesionales y gamers, con asesoría antes y después de tu compra.</p>
+                    <div class="hero-cta">
+                        <a href="/ULTRACOMP/productos.html" class="cta-button">Explorar productos</a>
+                        <a href="/mi-cotizacion" class="secondary-cta">Solicitar cotización</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat"><strong>500+</strong><span>Productos disponibles</span></div>
+                        <div class="hero-stat"><strong>15+</strong><span>Años de experiencia</span></div>
+                        <div class="hero-stat"><strong>24/7</strong><span>Cotización en línea</span></div>
+                    </div>
+                </div>
+                <button class="home-hero-floating-logo" type="button" aria-label="Animar logo de Ultracomp">
+                    <span class="logo-aura"></span>
+                    <span class="logo-ring logo-ring-one"></span>
+                    <span class="logo-ring logo-ring-two"></span>
+                    <span class="logo-particle particle-one"></span>
+                    <span class="logo-particle particle-two"></span>
+                    <span class="logo-particle particle-three"></span>
+                    <span class="logo-particle particle-four"></span>
+                    <img src="/GENERAL/logo-ultrasoft.svg" alt="">
+                    <span class="logo-click-wave"></span>
+                </button>
+        </div>
+    </section>
+
+    <aside class="floating-mascot" aria-label="EVA, mascota de Ultracomp">
+        <div class="floating-mascot-message">
+            <strong>Hola, soy EVA</strong>
+            <span>Te acompaño por Ultracomp</span>
+        </div>
+        <model-viewer
+            class="ultracomp-mascot"
+            src="/ULTRACOMP/eva.glb"
+            alt="EVA, robot mascota de Ultracomp"
+            camera-orbit="0deg 75deg auto"
+            shadow-intensity="1.2"
+            shadow-softness=".8"
+            exposure="1.05"
+            environment-image="neutral"
+            interaction-prompt="none"
+            loading="eager"></model-viewer>
+    </aside>
+
+    <section class="eva-assistant-panel" id="evaAssistantPanel" aria-hidden="true" aria-label="Asistente EVA">
+        <header class="eva-assistant-header">
+            <div>
+                <strong>EVA</strong>
+                <span>Asistente de Ultracomp</span>
+            </div>
+            <button type="button" id="closeEvaAssistant" aria-label="Cerrar asistente">&times;</button>
+        </header>
+        <div class="eva-assistant-body">
+            <p>¡Hola! Puedo ayudarte a encontrar productos o llevarte directamente a lo que necesitas.</p>
+            <form class="eva-search-form" id="evaSearchForm">
+                <input id="evaSearchInput" type="search" placeholder="¿Qué producto buscas?" aria-label="Buscar producto">
+                <button type="submit">Buscar</button>
+            </form>
+            <div class="eva-quick-actions">
+                <a href="/ULTRACOMP/productos.html">Ver productos</a>
+                <a href="/ULTRACOMP/productos.html?category=computers">Computadoras</a>
+                <a href="/ULTRACOMP/productos.html?category=printers">Impresoras</a>
+                <a href="/ULTRASOFT/ultrasoft.html">Ir a ULTRASOFT</a>
+                <a href="/mi-cotizacion">Mi cotización</a>
+                <a href="https://wa.me/18095726552?text=Hola%20EVA%2C%20necesito%20ayuda%20con%20Ultracomp" target="_blank" rel="noopener">Hablar por WhatsApp</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-brand-strip" aria-label="Categorías principales">
+        <div class="container">
+            <span>COMPUTADORAS</span>
+            <span>COMPONENTES</span>
+            <span>IMPRESORAS</span>
+            <span>PERIFÉRICOS</span>
+            <span>REDES</span>
+            <span>ACCESORIOS</span>
+        </div>
+    </section>
+
+    <section class="home-categories container">
+        <div class="home-section-heading">
+            <div>
+                <span>Encuentra lo que necesitas</span>
+                <h2>Compra por categoría</h2>
+            </div>
+            <a href="/ULTRACOMP/productos.html">Ver todo el catálogo →</a>
+        </div>
+        <div class="home-category-grid">
+            <a href="/ULTRACOMP/productos.html?category=computers"><span>🖥️</span><strong>Computadoras</strong></a>
+            <a href="/ULTRACOMP/productos.html?category=components"><span>⚙️</span><strong>Componentes</strong></a>
+            <a href="/ULTRACOMP/productos.html?category=printers"><span>🖨️</span><strong>Impresoras</strong></a>
+            <a href="/ULTRACOMP/productos.html?category=peripherals"><span>⌨️</span><strong>Periféricos</strong></a>
+            <a href="/ULTRACOMP/productos.html?category=network"><span>📡</span><strong>Redes</strong></a>
+            <a href="/ULTRACOMP/productos.html?category=accessories"><span>🔌</span><strong>Accesorios</strong></a>
+        </div>
+    </section>
+
+        <!-- Why choose -->
+        <section class="container" id="ultracompBenefits" style="margin-top:28px;">
+            <h2>¿Por qué elegir ULTRACOMP?</h2>
+            <div class="services-grid">
+                <div class="service-card"><div class="service-icon">🔒</div><div><strong>Garantía registrada</strong><div>Disponible únicamente en los productos que la incluyen.</div></div></div>
+                <div class="service-card"><div class="service-icon">🛠️</div><div><strong>Soporte especializado</strong><div>Técnicos certificados para instalación y mantenimiento.</div></div></div>
+                <div class="service-card"><div class="service-icon">✅</div><div><strong>Productos originales</strong><div>Solo marcas y componentes confiables.</div></div></div>
+                <div class="service-card"><div class="service-icon">🤝</div><div><strong>Asesoría personalizada</strong><div>Soluciones diseñadas para tu empresa o uso personal.</div></div></div>
+            </div>
+        </section>
+
+        <section class="scroll-testimonials" data-testimonial-brand="ultracomp" aria-label="Testimonios de clientes de Ultracomp"></section>
+    
+
+    <!-- Carrusel principal -->
+
+    <section class="featured-banner-section reveal" id="featured-banner">
+        <div class="container-banner">
+            
+            <div class="banner-carousel">
+                <button class="banner-control prev" type="button" aria-label="Anterior">&lsaquo;</button>
+                <button class="banner-control next" type="button" aria-label="Siguiente">&rsaquo;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Productos destacados -->
+
+    <section class="featured-products-section reveal" id="featured-products">
+        <div class="container">
+            <h2>Productos destacados de Ultracomp</h2>
+            <p class="featured-subtitle">Equipos, componentes y periféricos seleccionados para rendimiento, productividad y soporte confiable.</p>
+            <a href="/ULTRACOMP/productos.html" class="view-more-btn">Ver más productos</a>
+
+            <div class="products-carousel" id="featuredProductsCarousel"></div>
+        </div>
+    </section>
+
+    <!-- Ofertas -->
+
+    <section class="featured-products-section reveal" id="offers-section">
+        <div class="container">
+            <h2>Ofertas especiales</h2>
+            <p class="featured-subtitle">Productos con precios especiales por tiempo limitado.</p>
+            <a href="/ULTRACOMP/productos.html?flag=offer" class="view-more-btn">Ver todas las ofertas</a>
+
+            <div class="products-carousel" id="offersCarousel"></div>
+        </div>
+    </section>
+
+    <!-- Nuevos productos -->
+
+    <section class="featured-products-section reveal" id="new-products-section">
+        <div class="container">
+            <h2>Nuevos productos</h2>
+            <p class="featured-subtitle">Lo último en tecnología que acabamos de recibir.</p>
+            <a href="/ULTRACOMP/productos.html?flag=new" class="view-more-btn">Ver todos los productos</a>
+
+            <div class="products-carousel" id="newProductsCarousel"></div>
+        </div>
+    </section>
+
+    <!-- Lineas de producto -->
+
+    <section class="product-lines-section reveal" id="product-lines">
+        <div class="container">
+            <h2>Todo para equipar tu tecnología</h2>
+            <div class="product-lines-grid">
+                <a href="/ULTRACOMP/productos.html" class="product-line-card">
+                    <span class="line-kicker">Equipos</span>
+                    <h3>Laptops y PCs</h3>
+                    <p>Soluciones para oficina, estudio, gaming y estaciones de trabajo.</p>
+                </a>
+
+                <a href="/ULTRACOMP/productos.html" class="product-line-card">
+                    <span class="line-kicker">Componentes</span>
+                    <h3>Actualizaciones</h3>
+                    <p>Procesadores, tarjetas gráficas, memoria, almacenamiento y fuentes.</p>
+                </a>
+
+                <a href="/ULTRACOMP/productos.html" class="product-line-card">
+                    <span class="line-kicker">Periféricos</span>
+                    <h3>Accesorios</h3>
+                    <p>Monitores, teclados, mouse, audífonos y herramientas para productividad.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section reveal" id="about">
+    <div class="container about-content">
+
+        <!-- Texto lado izquierdo -->
+        <div class="about-text">
+            <h2>Más de 15 años de experiencia</h2>
+
+            <p>
+                En Ultracomp nos especializamos en proporcionar soluciones tecnológicas
+                integrales para empresas de todos los tamaños. Nuestro equipo de expertos
+                está comprometido con la excelencia y la satisfacción del cliente.
+            </p>
+
+            <p>
+                Trabajamos con las mejores marcas del mercado. Cuando un producto incluye
+                garantía, esta se indica claramente en su ficha. Tu tranquilidad es nuestra prioridad.
+            </p>
+        </div>
+
+        <!-- Caja lado derecho -->
+        <div class="clients-box">
+            <span class="highlight text">Atención personalizada</span>
+        </div>
+
+    </div>
+</section>
+
+    <section class="services-section reveal" id="services">
+        <div class="container">
+            <h2>Nuestros Servicios</h2>
+            
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Venta de Computadoras</h3>
+                    <p>Ofrecemos una amplia gama de computadoras de escritorio y laptops para todas las necesidades</p>
+                    <ul>
+                        <li>PCs de escritorio para oficina y gaming</li>
+                        <li>Laptops ultrabooks y workstations</li>
+                        <li>Configuraciones personalizadas</li>
+                        <li>Equipos para empresas y educación</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Componentes y Hardware</h3>
+                    <p>Componentes de alta calidad para construir o actualizar tu equipo</p>
+                    <ul>
+                        <li>Procesadores Intel y AMD</li>
+                        <li>Tarjetas gráficas NVIDIA y AMD</li>
+                        <li>Memoria RAM y almacenamiento SSD/HDD</li>
+                        <li>Monitores y periféricos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Soporte Técnico</h3>
+                    <p>Asistencia técnica profesional para mantener tu equipo funcionando perfectamente</p>
+                    <ul>
+                        <li>Diagnóstico y reparación</li>
+                        <li>Instalación de software y sistemas operativos</li>
+                        <li>Optimización de rendimiento</li>
+                        <li>Mantenimiento preventivo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Mantenimiento</h3>
+                    <p>Servicios de mantenimiento para mantener tus equipos en óptimas condiciones</p>
+                    <ul>
+                        <li>Limpieza física de componentes</li>
+                        <li>Actualización de drivers y firmware</li>
+                        <li>Verificación de temperatura y ventilación</li>
+                        <li>Reemplazo de pasta térmica</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Consultoría y Asesoría</h3>
+                    <p>Ayudamos a encontrar la solución perfecta para tus necesidades específicas</p>
+                    <ul>
+                        <li>Evaluación de requerimientos</li>
+                        <li>Recomendaciones personalizadas</li>
+                        <li>Presupuestos y cotizaciones</li>
+                        <li>Soporte post-venta</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats reveal">
+        <div class="stat-item">
+            <h2>Asesoría</h2>
+            <p>Atención personalizada</p>
+        </div>
+        <div class="stat-item">
+            <h2>Respaldo</h2>
+            <p>Garantía según producto y soporte</p>
+        </div>
+        <div class="stat-item">
+            <h2>Instalación</h2>
+            <p>Equipos listos para usar</p>
+        </div>
+        <div class="stat-item">
+            <h2>Soporte</h2>
+            <p>Acompañamiento post-venta</p>
+        </div>
+    </section>
+
+    <section class="timeline-section reveal" id="timeline">
+        <div class="container">
+            <h2>Proceso de Trabajo</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="year">Paso 1</span>
+                        <h3>Consulta</h3>
+                        <p>Entendemos tus necesidades y requerimientos para ofrecerte la mejor solución.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="year">Paso 2</span>
+                        <h3>Recomendación</h3>
+                        <p>Presentamos opciones personalizadas basadas en tu presupuesto y necesidades.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="year">Paso 3</span>
+                        <h3>Configuración</h3>
+                        <p>Preparamos y configuramos tu equipo con el software necesario.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="year">Paso 4</span>
+                        <h3>Entrega</h3>
+                        <p>Entregamos tu equipo listo para usar, con la garantía indicada en su ficha cuando aplique.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="year">Paso 5</span>
+                        <h3>Soporte</h3>
+                        <p>Brindamos soporte continuo y mantenimiento para tu tranquilidad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer">
+        <div class="container">
+            <p>© 2026 Ultracomp - Todos los derechos reservados</p>
+            <p><a href="/ULTRASOFT/ultrasoft.html" style="color: white;">Ver Ultrasoft</a></p>
+        </div>
+    </footer>
+
+    <script src="/ULTRACOMP/catalog-helpers.js"></script>
+    <script src="/ULTRACOMP/quote-cart.js"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/GENERAL/scroll-testimonials.js?v=20260708-fix-layout"></script>
+    <script src="/GENERAL/site-content.js?v=20260708-fix-layout"></script>
+    <script>
+        const featuredProductIds = [
+            'impresora-termica-etiqueta-2connect-2c-lp427b',
+            'impresora-termica-recibos-2connect-2c-pos8-01-v6',
+            'tablet-amazon-fire-hd-8-plus-32gb',
+            'aire-comprimido-sabo',
+            'almohadilla-mouse-cony',
+            'headset-fantech-hq53',
+            'headset-fantech-hq54',
+            'barra-sonido-subwoofer-jamatech',
+            'bocina-havit',
+            'bocina-fantech-gs205',
+            'boligrafo-deli-q0009',
+            'boligrafo-deli-q3'
+        ];
+
+        const bannerProductIds = [
+            'impresora-termica-recibos-2connect-2c-pos8-01-v6',
+            'impresora-termica-etiqueta-2connect-2c-lp427b',
+            'headset-fantech-hq53',
+            'headset-fantech-hq54',
+            'barra-sonido-subwoofer-jamatech',
+            'bocina-havit',
+            'almohadilla-mouse-cony',
+            'aire-comprimido-sabo',
+            'bocina-fantech-gs205',
+            'boligrafo-deli-q0009',
+            'boligrafo-deli-q3'
+        ];
+
+        let activeFeaturedProductIds = featuredProductIds.slice();
+        let activeBannerProductIds = bannerProductIds.slice();
+
+        function getProductsByIds(productIds, fallbackLimit = 12) {
+            const selectedProducts = productIds
+                .map(productId => window.getUltracompProductById(productId))
+                .filter(Boolean);
+
+            if (selectedProducts.length > 0) return selectedProducts;
+
+            return window.getUltracompProducts().slice(0, fallbackLimit);
+        }
+
+        function createProductImage(product) {
+            const image = document.createElement('img');
+            const catalogProduct = typeof window.getUltracompProductById === 'function'
+                ? window.getUltracompProductById(String(product.id))
+                : null;
+            image.src = (catalogProduct && catalogProduct.image)
+                || product.image
+                || '/IMAGENES/producto-sin-imagen.svg';
+            image.alt = product.name;
+            image.loading = 'lazy';
+            image.addEventListener('error', () => {
+                if (!image.src.endsWith('/IMAGENES/producto-sin-imagen.svg')) {
+                    image.src = '/IMAGENES/producto-sin-imagen.svg';
+                }
+            }, { once: true });
+            return image;
+        }
+
+        function renderHomeBanner() {
+            const bannerCarousel = document.querySelector('.banner-carousel');
+            if (!bannerCarousel) return;
+
+            getProductsByIds(activeBannerProductIds, 8).forEach(product => {
+                const bannerCard = document.createElement('a');
+                bannerCard.className = 'banner-card';
+                bannerCard.href = `producto-detalle.html?id=${product.id}`;
+                bannerCard.setAttribute('aria-label', `Ver detalles de ${product.name}`);
+
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'banner-image';
+                imageWrapper.appendChild(createProductImage(product));
+
+                bannerCard.appendChild(imageWrapper);
+                bannerCarousel.appendChild(bannerCard);
+            });
+        }
+
+        function renderFeaturedProducts() {
+            const productsCarousel = document.getElementById('featuredProductsCarousel');
+            if (!productsCarousel) return;
+
+            getProductsByIds(activeFeaturedProductIds, 12).forEach(product => {
+                const productCard = document.createElement('a');
+                productCard.className = 'product-card';
+                productCard.href = `producto-detalle.html?id=${product.id}`;
+                productCard.setAttribute('aria-label', `Ver detalles de ${product.name}`);
+
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'product-image';
+                imageWrapper.appendChild(createProductImage(product));
+
+                const productInfo = document.createElement('div');
+                productInfo.className = 'product-info';
+
+                const title = document.createElement('h3');
+                title.textContent = product.name;
+
+                const description = document.createElement('p');
+                description.className = 'product-description';
+                description.textContent = (product.shortSpecs || product.specs).slice(0, 3).join(', ');
+
+                const price = document.createElement('div');
+                price.className = 'product-price';
+                price.textContent = product.price;
+
+                const button = document.createElement('span');
+                button.className = 'product-button';
+                button.textContent = 'Ver Detalles';
+
+                productInfo.append(title, description, price, button);
+                productCard.append(imageWrapper, productInfo);
+                productsCarousel.appendChild(productCard);
+            });
+        }
+
+        async function renderOffers() {
+            const offersCarousel = document.getElementById('offersCarousel');
+            if (!offersCarousel) return;
+
+            try {
+                const response = await fetch('/api/products/offer?limit=8');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data.products)) {
+                        data.products.forEach(product => {
+                            const productCard = document.createElement('a');
+                            productCard.className = 'product-card';
+                            productCard.href = `producto-detalle.html?id=${product.id}`;
+                            productCard.setAttribute('aria-label', `Ver detalles de ${product.name}`);
+
+                            const imageWrapper = document.createElement('div');
+                            imageWrapper.className = 'product-image';
+                            imageWrapper.appendChild(createProductImage(product));
+
+                            const productInfo = document.createElement('div');
+                            productInfo.className = 'product-info';
+
+                            const title = document.createElement('h3');
+                            title.textContent = product.name;
+
+                            const description = document.createElement('p');
+                            description.className = 'product-description';
+                            description.textContent = (product.shortSpecs || product.specs).slice(0, 3).join(', ');
+
+                            const price = document.createElement('div');
+                            price.className = 'product-price';
+                            
+                            // Mostrar precio tachado si hay oferta
+                            if (product.originalPrice) {
+                                const originalPrice = document.createElement('span');
+                                originalPrice.className = 'original-price';
+                                originalPrice.textContent = product.originalPrice;
+                                const salePrice = document.createElement('span');
+                                salePrice.className = 'sale-price';
+                                salePrice.textContent = product.price;
+                                price.appendChild(originalPrice);
+                                price.appendChild(salePrice);
+                            } else {
+                                price.textContent = product.price;
+                            }
+
+                            const button = document.createElement('span');
+                            button.className = 'product-button';
+                            button.textContent = 'Ver Detalles';
+
+                            productInfo.append(title, description, price, button);
+                            productCard.append(imageWrapper, productInfo);
+                            offersCarousel.appendChild(productCard);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando ofertas:', error);
+            }
+        }
+
+        async function renderNewProducts() {
+            const newProductsCarousel = document.getElementById('newProductsCarousel');
+            if (!newProductsCarousel) return;
+
+            try {
+                const response = await fetch('/api/products/new?limit=8');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (Array.isArray(data.products)) {
+                        data.products.forEach(product => {
+                            const productCard = document.createElement('a');
+                            productCard.className = 'product-card';
+                            productCard.href = `producto-detalle.html?id=${product.id}`;
+                            productCard.setAttribute('aria-label', `Ver detalles de ${product.name}`);
+
+                            const imageWrapper = document.createElement('div');
+                            imageWrapper.className = 'product-image';
+                            imageWrapper.appendChild(createProductImage(product));
+
+                            const productInfo = document.createElement('div');
+                            productInfo.className = 'product-info';
+
+                            const title = document.createElement('h3');
+                            title.textContent = product.name;
+
+                            const description = document.createElement('p');
+                            description.className = 'product-description';
+                            description.textContent = (product.shortSpecs || product.specs).slice(0, 3).join(', ');
+
+                            const price = document.createElement('div');
+                            price.className = 'product-price';
+                            price.textContent = product.price;
+
+                            const button = document.createElement('span');
+                            button.className = 'product-button';
+                            button.textContent = 'Ver Detalles';
+
+                            productInfo.append(title, description, price, button);
+                            productCard.append(imageWrapper, productInfo);
+                            newProductsCarousel.appendChild(productCard);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error cargando nuevos productos:', error);
+            }
+        }
+
+        async function loadProductsFromApi() {
+            try {
+                const [productsResponse, contentResponse] = await Promise.all([
+                    fetch('/api/products?limit=5000'),
+                    fetch('/api/content')
+                ]);
+
+                if (productsResponse.ok) {
+                    const payload = await productsResponse.json();
+                    if (Array.isArray(payload.products)) {
+                        window.setUltracompProducts(payload.products);
+                    } else {
+                        window.setUltracompProducts([]);
+                    }
+                } else {
+                    window.setUltracompProducts([]);
+                }
+
+                if (contentResponse.ok) {
+                    const payload = await contentResponse.json();
+                    if (payload.content) {
+                        activeFeaturedProductIds = payload.content.featuredProductIds || activeFeaturedProductIds;
+                        activeBannerProductIds = payload.content.bannerProductIds || activeBannerProductIds;
+                    }
+                }
+            } catch (error) {
+                console.warn('Error cargando productos:', error.message);
+                window.setUltracompProducts([]);
+            }
+        }
+
+        async function initHomeProducts() {
+            await loadProductsFromApi();
+            renderHomeBanner();
+            renderFeaturedProducts();
+            await renderOffers();
+            await renderNewProducts();
+        }
+
+        initHomeProducts();
+    </script>
+    <script src="/ULTRACOMP/mobile-nav.js"></script>
+    <script>
+        const header = document.querySelector('header');
+
+        if (header) {
+            const updateHeaderState = () => {
+                header.classList.toggle('scrolled', window.scrollY > 50);
+            };
+
+            window.addEventListener('scroll', updateHeaderState);
+            window.addEventListener('load', updateHeaderState);
+        }
+
+        const heroLogo = document.querySelector('.home-hero-floating-logo');
+
+        if (heroLogo) {
+            heroLogo.addEventListener('click', () => {
+                heroLogo.classList.remove('is-bouncing');
+                void heroLogo.offsetWidth;
+                heroLogo.classList.add('is-bouncing');
+            });
+
+            heroLogo.addEventListener('animationend', event => {
+                if (event.animationName === 'logoWave') {
+                    heroLogo.classList.remove('is-bouncing');
+                }
+            });
+        }
+
+        // Animaciones reveal con IntersectionObserver
+        (function () {
+            const reveals = document.querySelectorAll('.reveal');
+            if (!reveals.length) return;
+
+            const activate = entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(activate, {
+                threshold: 0.08,
+                rootMargin: '0px 0px -60px 0px'
+            });
+
+            reveals.forEach(el => observer.observe(el));
+        })();
+    </script>
+</body>
+</html>

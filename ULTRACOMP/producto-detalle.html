@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto - Ultracomp</title>
+    <link rel="stylesheet" href="/GENERAL/ultra.css">
+    <link rel="stylesheet" href="/ULTRACOMP/producto-detalle.css">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css">
+    <script type="module" src="/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a class="nav-brand" href="/ULTRACOMP/index.html">
+                    <img src="/GENERAL/logo-ultrasoft.svg" alt="" class="ultrasoft-logo">
+                    <span>ULTRACOMP</span>
+                </a>
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Abrir menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="nav-links" id="primaryNavigation">
+                    <a href="/ULTRACOMP/productos.html">Productos</a>
+                    <a href="/ULTRASOFT/ultrasoft.html">Ultrasoft</a>
+                    <a href="/mi-cotizacion" class="quote-cart-button">
+                        Mi cotización <span id="quoteCartCounter"></span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="product-detail-section">
+        <div class="container">
+            <nav class="product-breadcrumb" aria-label="Ruta de navegación">
+                <a href="/ULTRACOMP/productos.html">Productos</a>
+                <span>/</span>
+                <span id="productBreadcrumbName">Detalle</span>
+            </nav>
+            <div class="product-detail">
+                <div class="product-detail-image">
+                    <span class="product-image-badge">Disponible</span>
+                    <img id="productImage" src="" alt="Producto">
+                </div>
+                <div class="product-detail-info">
+                    <div class="product-detail-kicker" id="productCodeLabel">ULTRACOMP</div>
+                    <h1 id="productName">Nombre del Producto</h1>
+                    <p id="productDescription" class="product-detail-description">Descripción del producto</p>
+
+                    <div class="product-detail-specs">
+                        <div id="productSpecs" class="specs-list"></div>
+                    </div>
+
+                    <div class="product-purchase-row">
+                        <div>
+                            <span class="product-price-label">Precio final</span>
+                            <div id="productPrice" class="product-detail-price">$0</div>
+                        </div>
+                        <div class="product-stock-pill">
+                            <span class="product-stock-dot"></span>
+                            <span id="productAvailability">En stock</span>
+                        </div>
+                    </div>
+
+                    <div class="product-detail-features">
+                        <h3>Lo que debes saber</h3>
+                        <ul id="productFeatures"></ul>
+                    </div>
+
+                    <div class="product-payment-note">
+                        <strong>Pago flexible</strong>
+                        <span>Transferencia, tarjeta (POS) y pago en tienda.</span>
+                    </div>
+
+                    <div class="product-detail-actions">
+                        <button class="cta-button" type="button" id="addToQuoteBtn" onclick="addToQuoteCartFromDetail()">Agregar a cotización</button>
+                        <div class="product-secondary-actions">
+                            <button class="secondary-button" type="button" onclick="goBack()">Volver a productos</button>
+                            <a class="secondary-button" href="#" id="whatsappQuote">Cotizar por WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="related-products-section">
+                <div class="related-products-heading">
+                    <div>
+                        <span>También te pueden interesar</span>
+                        <h2>Productos relacionados</h2>
+                    </div>
+                    <a href="/ULTRACOMP/productos.html">Ver todo el catálogo →</a>
+                </div>
+                <div id="relatedProducts"></div>
+            </section>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Ultracomp - Todos los derechos reservados</p>
+            <p><a href="/ULTRASOFT/ultrasoft.html" style="color: white;">Ver Ultrasoft</a></p>
+        </div>
+    </footer>
+
+    <script src="/ULTRACOMP/catalog-helpers.js"></script>
+    <script src="/ULTRACOMP/quote-cart.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        let WHATSAPP_PHONE = '8095726552';
+
+        function sanitizePhone(value) {
+            return String(value || '').replace(/[^\d]/g, '');
+        }
+
+        async function loadSiteContent() {
+            try {
+                const response = await fetch('/api/content');
+                if (!response.ok) throw new Error('No se pudo cargar configuración');
+                const payload = await response.json();
+                WHATSAPP_PHONE = sanitizePhone(payload.content && payload.content.settings && payload.content.settings.whatsapp) || '8095726552';
+            } catch (error) {
+                console.warn('Configuración administrativa no disponible:', error.message);
+            }
+        }
+
+        async function loadProductsFromApi() {
+            try {
+                if (!productId || !/^\d+$/.test(productId)) {
+                    throw new Error('Producto no encontrado');
+                }
+                const [response, catalogResponse] = await Promise.all([
+                    fetch(`/api/products/${encodeURIComponent(productId)}`),
+                    fetch('/api/products?limit=120')
+                ]);
+                if (response.status === 404) throw new Error('Producto no encontrado');
+                if (!response.ok) throw new Error('No se pudieron cargar productos');
+                const payload = await response.json();
+                const catalogPayload = catalogResponse.ok ? await catalogResponse.json() : { products: [] };
+                if (payload.product) {
+                    const products = [payload.product].concat(
+                        (catalogPayload.products || []).filter(item => String(item.id) !== String(payload.product.id))
+                    );
+                    window.setUltracompProducts(products);
+                } else {
+                    window.setUltracompProducts([]);
+                }
+            } catch (error) {
+                console.warn('Error cargando productos:', error.message);
+                window.setUltracompProducts([]);
+            }
+        }
+
+        async function loadProduct() {
+            await loadSiteContent();
+            await loadProductsFromApi();
+            const product = window.getUltracompProductById(productId);
+
+            if (!product) {
+                document.getElementById('productName').textContent = 'Producto no encontrado';
+                document.getElementById('productDescription').textContent = 'El producto que buscas no existe en la tienda.';
+                document.getElementById('productPrice').textContent = '';
+                document.getElementById('productSpecs').innerHTML = '';
+                document.getElementById('productFeatures').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productBreadcrumbName').textContent = product.name;
+            document.getElementById('productCodeLabel').textContent = `Código artículo ${getArticuloCode(product)}`;
+            document.getElementById('productDescription').textContent = product.description;
+            document.getElementById('productPrice').textContent = product.price;
+            document.getElementById('productImage').src = product.image;
+            document.getElementById('productImage').alt = product.name;
+            const stock = Math.max(0, Number(product.stock ?? product.existence ?? 0));
+            document.getElementById('productAvailability').textContent = stock > 0
+                ? `${stock} unidad${stock === 1 ? '' : 'es'}`
+                : 'Agotado';
+            document.querySelector('.product-stock-pill').classList.toggle('is-out', stock <= 0);
+            document.querySelector('.product-image-badge').textContent = stock > 0 ? 'Disponible' : 'Agotado';
+            document.getElementById('addToQuoteBtn').disabled = stock <= 0;
+
+            const quoteLink = document.getElementById('whatsappQuote');
+            const quoteMessage = [
+                `Hola, estoy interesado en este producto: ${product.name}`,
+                `Código artículo: ${getArticuloCode(product)}`,
+                'Cantidad: 1'
+            ].join('\n');
+            quoteLink.href = WHATSAPP_PHONE ? `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(quoteMessage)}` : '#';
+            quoteLink.onclick = (event) => {
+                if (!WHATSAPP_PHONE) {
+                    event.preventDefault();
+                    alert('WhatsApp no está configurado todavía.');
+                }
+            };
+
+            const specsList = document.getElementById('productSpecs');
+            specsList.innerHTML = '';
+            (product.specs || []).forEach(spec => {
+                const specItem = document.createElement('div');
+                specItem.className = 'spec-item';
+                specItem.textContent = spec;
+                specsList.appendChild(specItem);
+            });
+
+            const featuresList = document.getElementById('productFeatures');
+            featuresList.innerHTML = '';
+            (product.features || []).forEach(feature => {
+                const featureItem = document.createElement('li');
+                featureItem.textContent = feature;
+                featuresList.appendChild(featureItem);
+            });
+
+            const relatedContainer = document.getElementById('relatedProducts');
+            relatedContainer.innerHTML = '';
+            const currentCategories = new Set(product.categories || []);
+            const relatedProducts = window.getUltracompProducts()
+                .filter(item => String(item.id) !== String(product.id))
+                .map(item => ({
+                    item,
+                    score: (item.brand === product.brand ? 3 : 0)
+                        + (item.categories || []).filter(category => currentCategories.has(category)).length
+                }))
+                .sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name))
+                .slice(0, 4)
+                .map(entry => entry.item);
+
+            relatedContainer.className = 'related-products-grid';
+            relatedProducts.forEach(item => {
+                const card = document.createElement('a');
+                card.className = 'related-product-card';
+                card.href = `/ULTRACOMP/producto-detalle.html?id=${encodeURIComponent(item.id)}`;
+
+                const image = document.createElement('img');
+                image.src = item.image || '/IMAGENES/producto-sin-imagen.svg';
+                image.alt = item.name;
+                image.onerror = () => { image.src = '/IMAGENES/producto-sin-imagen.svg'; };
+
+                const name = document.createElement('strong');
+                name.textContent = item.name;
+                const price = document.createElement('span');
+                price.textContent = item.price || 'Consultar precio';
+
+                card.append(image, name, price);
+                relatedContainer.appendChild(card);
+            });
+        }
+
+        function goBack() {
+            const scrollPosition = sessionStorage.getItem('ultracompScrollPosition');
+            window.location.href = 'productos.html' + (scrollPosition ? `#restore-scroll` : '');
+        }
+
+        function addToQuoteCartFromDetail() {
+            const product = window.getUltracompProductById(productId);
+            if (product) {
+                addToQuoteCart(product);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProduct();
+            restoreScrollPosition();
+        });
+
+        function restoreScrollPosition() {
+            const scrollPosition = sessionStorage.getItem('ultracompScrollPosition');
+            if (scrollPosition) {
+                setTimeout(() => {
+                    window.scrollTo(0, parseInt(scrollPosition, 10));
+                    sessionStorage.removeItem('ultracompScrollPosition');
+                }, 100);
+            }
+        }
+    </script>
+    <script src="/ULTRACOMP/mobile-nav.js"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/GENERAL/site-content.js"></script>
+</body>
+</html>

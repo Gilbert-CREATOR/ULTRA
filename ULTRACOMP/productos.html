@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Ultracomp</title>
+    <link rel="stylesheet" href="/GENERAL/ultra.css">
+    <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css">
+    <script type="module" src="/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body class="products-catalog-page">
+    <header>
+        <div class="container">
+            <nav>
+                <a class="nav-brand" href="/ULTRACOMP/index.html">
+                    <img src="/GENERAL/logo-ultrasoft.svg" alt="" class="ultrasoft-logo">
+                    <span>ULTRACOMP</span>
+                </a>
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Abrir menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="nav-links" id="primaryNavigation">
+                    <a href="/ULTRASOFT/ultrasoft.html">Ultrasoft</a>
+                    <a href="/ULTRACOMP/index.html">Ultracomp</a>
+                    <a href="/mi-cotizacion" class="quote-cart-button">
+                        Mi cotización <span id="quoteCartCounter"></span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Nuestros Productos</h1>
+            <p>Computadoras y hardware de alta calidad para todas tus necesidades</p>
+        </div>
+    </section>
+
+    <section class="products-page" aria-label="Catálogo de productos Ultracomp">
+        <div class="products-layout">
+            <div class="filters-backdrop" id="filtersBackdrop"></div>
+
+            <aside class="products-sidebar" id="productsSidebar" aria-label="Filtros de productos">
+                <div class="sidebar-header">
+                    <h2>Filtros</h2>
+                    <button class="sidebar-close" id="closeFiltersBtn" type="button" aria-label="Cerrar filtros">&times;</button>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Categorías</h3>
+                    <div id="categoryFilters" class="filter-options"></div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Marca</h3>
+                    <div id="brandFilters" class="filter-options filter-options-scroll"></div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Precio</h3>
+                    <div id="priceFilters" class="filter-options"></div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Disponibilidad</h3>
+                    <div id="availabilityFilters" class="filter-options"></div>
+                </div>
+
+                <button class="clear-filters-btn" id="clearFiltersBtn" type="button">Limpiar filtros</button>
+            </aside>
+
+            <main class="products-content">
+                <div class="products-toolbar">
+                    <button class="mobile-filter-btn" id="openFiltersBtn" type="button">Filtros</button>
+                    <div class="catalog-search">
+                        <input id="productSearch" type="search" placeholder="Buscar producto…" aria-label="Buscar productos">
+                    </div>
+                    <select id="productSort" class="sort-select" aria-label="Ordenar productos">
+                        <option value="relevance">Relevancia</option>
+                        <option value="price-asc">Precio: menor a mayor</option>
+                        <option value="price-desc">Precio: mayor a menor</option>
+                        <option value="name-asc">Nombre A-Z</option>
+                        <option value="name-desc">Nombre Z-A</option>
+                    </select>
+                    <div id="productsCounter" class="products-counter">Mostrando 0 productos</div>
+                </div>
+
+                <div class="quick-categories" id="quickCategories" aria-label="Categorías rápidas"></div>
+
+                <div id="productsList" class="products-grid"></div>
+                <div id="noResultsMessage" class="search-no-results" style="display:none;"></div>
+                <nav id="catalogPagination" class="catalog-pagination" aria-label="Páginas del catálogo"></nav>
+            </main>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Ultracomp - Todos los derechos reservados</p>
+            <p><a href="/ULTRASOFT/ultrasoft.html" style="color: white;">Ver Ultrasoft</a></p>
+        </div>
+    </footer>
+
+    <script src="/ULTRACOMP/catalog-helpers.js"></script>
+    <script src="/ULTRACOMP/quote-cart.js"></script>
+    <script>
+        let WHATSAPP_PHONE = '8095726552';
+        const categoryFilters = document.getElementById('categoryFilters');
+        const brandFilters = document.getElementById('brandFilters');
+        const priceFilters = document.getElementById('priceFilters');
+        const availabilityFilters = document.getElementById('availabilityFilters');
+        const quickCategories = document.getElementById('quickCategories');
+        const productsList = document.getElementById('productsList');
+        const searchInput = document.getElementById('productSearch');
+        const sortSelect = document.getElementById('productSort');
+        const productsCounter = document.getElementById('productsCounter');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        const catalogPagination = document.getElementById('catalogPagination');
+        const productsSidebar = document.getElementById('productsSidebar');
+        const filtersBackdrop = document.getElementById('filtersBackdrop');
+        const openFiltersBtn = document.getElementById('openFiltersBtn');
+        const closeFiltersBtn = document.getElementById('closeFiltersBtn');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+        let activeCategory = 'all';
+        let activeSearch = '';
+        let activeBrand = 'all';
+        let activePriceRange = 'all';
+        let activeAvailability = 'all';
+        let activeFlag = 'all';
+        let activeSort = 'relevance';
+        const PRODUCTS_PER_PAGE = 12;
+        let currentPage = 1;
+
+        const categoryLabels = {
+            all: 'Todos',
+            computers: 'Computadoras',
+            laptops: 'Laptops',
+            gaming: 'Gaming',
+            monitors: 'Monitores',
+            components: 'Componentes',
+            peripherals: 'Periféricos',
+            printers: 'Impresoras',
+            accessories: 'Accesorios',
+            adapters: 'Adaptadores',
+            supplies: 'Suministros',
+            inks: 'Tintas',
+            toners: 'Tóner',
+            network: 'Redes',
+            storage: 'Almacenamiento',
+            bags: 'Bultos',
+            office: 'Oficina',
+            stationery: 'Papelería',
+            cables: 'Cables',
+            chargers: 'Cargadores',
+            memory: 'Memorias',
+            hubs: 'Hubs',
+            lighting: 'Iluminación',
+            tablets: 'Tablets',
+            audio: 'Audio',
+            security: 'Seguridad y cámaras',
+            furniture: 'Mobiliario',
+            power: 'Energía y UPS',
+            pos: 'Punto de venta',
+            projectors: 'Proyectores',
+            tools: 'Herramientas',
+            servers: 'Servidores',
+            phones: 'Telefonía',
+            other: 'Otros'
+        };
+
+        const categoryOrder = [
+            'all',
+            'computers',
+            'laptops',
+            'gaming',
+            'monitors',
+            'components',
+            'peripherals',
+            'printers',
+            'accessories',
+            'adapters',
+            'supplies',
+            'inks',
+            'toners',
+            'network',
+            'storage',
+            'bags',
+            'office',
+            'stationery',
+            'cables',
+            'chargers',
+            'memory',
+            'hubs',
+            'lighting',
+            'tablets',
+            'audio',
+            'security',
+            'furniture',
+            'power',
+            'pos',
+            'projectors',
+            'tools',
+            'servers',
+            'phones',
+            'other'
+        ];
+
+        const priceRanges = [
+            { value: 'all', label: 'Todos' },
+            { value: 'lt1000', label: 'Menos de RD$1,000' },
+            { value: '1000-3000', label: 'RD$1,000 - RD$3,000' },
+            { value: '3000-5000', label: 'RD$3,000 - RD$5,000' },
+            { value: '5000-10000', label: 'RD$5,000 - RD$10,000' },
+            { value: '10000+', label: 'Más de RD$10,000' }
+        ];
+
+        const availabilityOptions = [
+            { value: 'all', label: 'Todas' },
+            { value: 'available', label: 'Disponible' },
+            { value: 'unavailable', label: 'Agotado' }
+        ];
+
+        const quickCategoryOptions = [
+            { value: 'all', label: 'Todos' },
+            { value: 'offer', label: 'Ofertas', type: 'flag' },
+            { value: 'new', label: 'Nuevos', type: 'flag' },
+            { value: 'best-sellers', label: 'Más vendidos' },
+            { value: 'computers', label: 'Computadoras' },
+            { value: 'gaming', label: 'Gaming' },
+            { value: 'peripherals', label: 'Periféricos' },
+            { value: 'printers', label: 'Impresoras' },
+            { value: 'accessories', label: 'Accesorios' }
+        ];
+
+        function createProductItem(product) {
+            const item = document.createElement('div');
+            item.className = 'catalog-card';
+            item.dataset.category = product.categories.join(' ');
+            item.addEventListener('click', () => window.showProductDetail(product.id));
+
+            const imageWrapper = document.createElement('div');
+            imageWrapper.className = 'catalog-card-image';
+
+            const image = document.createElement('img');
+            image.src = product.image;
+            image.alt = product.name;
+            image.loading = 'lazy';
+
+            imageWrapper.appendChild(image);
+
+            // Agregar badges basados en flags de la base de datos
+            const flags = product.flags || {};
+            if (flags.esOferta || flags.esNuevo || flags.esMasVendido || flags.esDestacado || flags.esRecomendado) {
+                const badges = document.createElement('div');
+                badges.className = 'product-badges';
+                if (flags.esOferta) { const b = document.createElement('span'); b.className='badge sale'; b.textContent='OFERTA'; badges.appendChild(b); }
+                if (flags.esNuevo) { const b = document.createElement('span'); b.className='badge new'; b.textContent='NUEVO'; badges.appendChild(b); }
+                if (flags.esMasVendido) { const b = document.createElement('span'); b.className='badge top'; b.textContent='MÁS VENDIDO'; badges.appendChild(b); }
+                if (flags.esDestacado) { const b = document.createElement('span'); b.className='badge featured'; b.textContent='DESTACADO'; badges.appendChild(b); }
+                if (flags.esRecomendado) { const b = document.createElement('span'); b.className='badge recommended'; b.textContent='RECOMENDADO'; badges.appendChild(b); }
+                item.appendChild(badges);
+            }
+
+            const content = document.createElement('div');
+            content.className = 'catalog-card-content';
+
+            const title = document.createElement('h3');
+            title.textContent = product.name;
+
+            const description = document.createElement('p');
+            description.className = 'catalog-card-description';
+            description.textContent = product.shortDescription || product.description;
+
+            const meta = document.createElement('div');
+            meta.className = 'catalog-card-meta';
+            const brand = document.createElement('span');
+            brand.textContent = getBrandName(product);
+            const category = document.createElement('span');
+            category.textContent = getPrimaryCategoryLabel(product);
+            const stock = document.createElement('span');
+            const availableUnits = Math.max(0, Number(product.stock ?? product.existence ?? 0));
+            stock.textContent = `Existencia: ${availableUnits}`;
+            meta.append(brand, category, stock);
+
+            const price = document.createElement('div');
+            price.className = 'catalog-card-price';
+            
+            // Mostrar precio tachado si hay precio de oferta
+            if (product.originalPrice && flags.esOferta) {
+                const originalPrice = document.createElement('span');
+                originalPrice.className = 'original-price';
+                originalPrice.textContent = product.originalPrice;
+                const salePrice = document.createElement('span');
+                salePrice.className = 'sale-price';
+                salePrice.textContent = product.price;
+                price.appendChild(originalPrice);
+                price.appendChild(salePrice);
+            } else {
+                price.textContent = product.price;
+            }
+
+            const button = document.createElement('button');
+            button.className = 'view-detail-btn catalog-action-primary';
+            button.type = 'button';
+            button.textContent = 'Ver detalle';
+            button.addEventListener('click', (e) => { e.stopPropagation(); window.showProductDetail(product.id); });
+
+            const quoteButton = document.createElement('a');
+            quoteButton.className = 'quote-btn catalog-action-secondary';
+            quoteButton.textContent = 'Cotizar';
+            quoteButton.href = getWhatsappQuoteUrl(product);
+            quoteButton.target = '_blank';
+            quoteButton.rel = 'noopener';
+            quoteButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!WHATSAPP_PHONE) {
+                    e.preventDefault();
+                    alert('WhatsApp no está configurado todavía.');
+                    return;
+                }
+            });
+
+            const addToQuoteButton = document.createElement('button');
+            addToQuoteButton.className = 'add-to-quote-btn catalog-action-primary';
+            addToQuoteButton.type = 'button';
+            addToQuoteButton.textContent = 'Agregar a cotización';
+            addToQuoteButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToQuoteCart(product);
+            });
+
+            const actions = document.createElement('div');
+            actions.className = 'catalog-card-actions';
+            actions.append(button, addToQuoteButton, quoteButton);
+
+            content.append(title, description, meta, price, actions);
+            item.append(imageWrapper, content);
+
+            return item;
+        }
+
+        function parsePrice(priceStr) {
+            if (!priceStr) return 0;
+            const num = parseFloat((priceStr + '').replace(/[^0-9.]/g, ''));
+            return isNaN(num) ? 0 : num;
+        }
+
+        function matchesPriceRange(product) {
+            const p = parsePrice(product.price);
+            switch (activePriceRange) {
+                case 'lt1000': return p < 1000;
+                case '1000-3000': return p >= 1000 && p <= 3000;
+                case '3000-5000': return p >= 3000 && p <= 5000;
+                case '5000-10000': return p >= 5000 && p <= 10000;
+                case '10000+': return p > 10000;
+                default: return true;
+            }
+        }
+
+        function matchesAvailability(product) {
+            if (activeAvailability === 'all') return true;
+            const available = (typeof product.available === 'boolean') ? product.available : true;
+            if (activeAvailability === 'available') return available === true;
+            if (activeAvailability === 'unavailable') return available === false;
+            return true;
+        }
+
+        function getBrandName(product) {
+            return (product.brand || (product.name ? product.name.split(' ')[0] : '')).toString();
+        }
+
+        function getPrimaryCategoryLabel(product) {
+            const category = (product.categories || []).find(c => c !== 'accessories') || (product.categories || [])[0] || 'accessories';
+            return categoryLabels[category] || category;
+        }
+
+        function getWhatsappQuoteUrl(product) {
+            const message = [
+                `Hola, estoy interesado en este producto: ${product.name}`,
+                `Código artículo: ${getArticuloCode(product)}`,
+                'Cantidad: 1'
+            ].join('\n');
+            if (!WHATSAPP_PHONE) return '#';
+            return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+        }
+
+        function sanitizePhone(value) {
+            return String(value || '').replace(/[^\d]/g, '');
+        }
+
+        async function loadSiteContent() {
+            try {
+                const response = await fetch('/api/content');
+                if (!response.ok) throw new Error('No se pudo cargar configuración');
+                const payload = await response.json();
+                WHATSAPP_PHONE = sanitizePhone(payload.content && payload.content.settings && payload.content.settings.whatsapp) || '8095726552';
+            } catch (error) {
+                console.warn('Configuración administrativa no disponible:', error.message);
+            }
+
+        }
+
+        function filterProducts(product) {
+            const query = activeSearch.trim().toLowerCase();
+            const flags = product.flags || {};
+            const matchesFlag = activeFlag === 'all'
+                || (activeFlag === 'offer' && flags.esOferta === true)
+                || (activeFlag === 'new' && flags.esNuevo === true)
+                || (activeFlag === 'featured' && flags.esDestacado === true)
+                || (activeFlag === 'recommended' && flags.esRecomendado === true)
+                || (activeFlag === 'bestseller' && (flags.esMasVendido === true || product.bestSeller === true));
+            if (!matchesFlag) return false;
+
+            const matchesCategory = activeCategory === 'all'
+                || (activeCategory === 'best-sellers'
+                    ? (flags.esMasVendido === true || product.bestSeller === true)
+                    : product.categories.includes(activeCategory));
+            if (!matchesCategory) return false;
+
+            const brandName = getBrandName(product);
+            const matchesBrand = activeBrand === 'all' || (brandName && brandName.toLowerCase() === activeBrand.toLowerCase());
+            if (!matchesBrand) return false;
+
+            if (!matchesPriceRange(product)) return false;
+            if (!matchesAvailability(product)) return false;
+
+            if (!query) return true;
+
+            const searchText = `${product.name || ''} ${product.description || ''} ${product.shortDescription || ''} ${product.categories ? product.categories.join(' ') : ''} ${brandName}`.toLowerCase();
+            return searchText.includes(query);
+        }
+
+        function sortProducts(products) {
+            const sorted = products.slice();
+            switch (activeSort) {
+                case 'price-asc':
+                    return sorted.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+                case 'price-desc':
+                    return sorted.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+                case 'name-asc':
+                    return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                case 'name-desc':
+                    return sorted.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+                default:
+                    return sorted;
+            }
+        }
+
+        function renderProducts() {
+            productsList.innerHTML = '';
+            const filtered = sortProducts(window.ultracompProducts.filter(filterProducts));
+            const totalPages = Math.max(1, Math.ceil(filtered.length / PRODUCTS_PER_PAGE));
+            currentPage = Math.min(Math.max(1, currentPage), totalPages);
+            const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+            const pageProducts = filtered.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+            const firstVisible = filtered.length ? startIndex + 1 : 0;
+            const lastVisible = Math.min(startIndex + PRODUCTS_PER_PAGE, filtered.length);
+            productsCounter.textContent = `Mostrando ${firstVisible}-${lastVisible} de ${filtered.length} productos`;
+
+            if (filtered.length === 0) {
+                noResultsMessage.style.display = 'block';
+                noResultsMessage.textContent = activeSearch
+                    ? `No se encontraron productos para "${activeSearch}" con los filtros aplicados.`
+                    : 'No se encontraron productos con los filtros aplicados.';
+                catalogPagination.innerHTML = '';
+            } else {
+                noResultsMessage.style.display = 'none';
+                pageProducts.forEach(product => productsList.appendChild(createProductItem(product)));
+                renderPagination(totalPages);
+            }
+        }
+
+        function renderPagination(totalPages) {
+            catalogPagination.innerHTML = '';
+            if (totalPages <= 1) return;
+
+            const addButton = (label, page, options = {}) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = label;
+                button.disabled = Boolean(options.disabled);
+                button.className = options.active ? 'active' : '';
+                if (options.active) button.setAttribute('aria-current', 'page');
+                button.setAttribute('aria-label', options.ariaLabel || `Ir a la página ${page}`);
+                button.addEventListener('click', () => {
+                    currentPage = page;
+                    renderProducts();
+                    document.querySelector('.products-toolbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+                catalogPagination.appendChild(button);
+            };
+
+            addButton('‹', currentPage - 1, { disabled: currentPage === 1, ariaLabel: 'Página anterior' });
+
+            const visiblePages = new Set([1, totalPages, currentPage - 1, currentPage, currentPage + 1]);
+            let previousPage = 0;
+            Array.from(visiblePages)
+                .filter(page => page >= 1 && page <= totalPages)
+                .sort((a, b) => a - b)
+                .forEach(page => {
+                    if (previousPage && page - previousPage > 1) {
+                        const separator = document.createElement('span');
+                        separator.textContent = '…';
+                        separator.setAttribute('aria-hidden', 'true');
+                        catalogPagination.appendChild(separator);
+                    }
+                    addButton(String(page), page, { active: page === currentPage });
+                    previousPage = page;
+                });
+
+            addButton('›', currentPage + 1, { disabled: currentPage === totalPages, ariaLabel: 'Página siguiente' });
+        }
+
+        function resetPageAndRender() {
+            currentPage = 1;
+            renderProducts();
+        }
+
+        function debounce(fn, wait){ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn.apply(this,args), wait); }; }
+
+        searchInput.addEventListener('input', debounce(()=>{ activeSearch = searchInput.value; resetPageAndRender(); }, 180));
+
+        function createRadioOption(groupName, value, label, checked, onChange) {
+            const option = document.createElement('label');
+            option.className = 'filter-option';
+            option.innerHTML = `<input type="radio" name="${groupName}" value="${value}" ${checked ? 'checked' : ''}> <span>${label}</span>`;
+            option.querySelector('input').addEventListener('change', onChange);
+            return option;
+        }
+
+        function getExistingCategories() {
+            const existing = new Set(window.ultracompProducts.flatMap(product => product.categories || []));
+            return categoryOrder.filter(category => category === 'all' || existing.has(category));
+        }
+
+        function renderCategoryFilters() {
+            categoryFilters.innerHTML = '';
+            getExistingCategories().forEach(category => {
+                categoryFilters.appendChild(createRadioOption('categoryFilter', category, categoryLabels[category] || category, category === activeCategory, () => {
+                    activeCategory = category;
+                    activeFlag = 'all';
+                    updateQuickCategories();
+                    resetPageAndRender();
+                    closeFiltersPanel();
+                }));
+            });
+        }
+
+        function renderBrandFilters() {
+            brandFilters.innerHTML = '';
+            const brands = Array.from(new Set(window.ultracompProducts.map(getBrandName).filter(Boolean))).sort((a,b) => a.localeCompare(b));
+            brandFilters.appendChild(createRadioOption('brandFilter', 'all', 'Todas', activeBrand === 'all', () => {
+                activeBrand = 'all';
+                resetPageAndRender();
+            }));
+            brands.forEach(brand => {
+                brandFilters.appendChild(createRadioOption('brandFilter', brand, brand, brand === activeBrand, () => {
+                    activeBrand = brand;
+                    resetPageAndRender();
+                }));
+            });
+        }
+
+        function renderPriceFilters() {
+            priceFilters.innerHTML = '';
+            priceRanges.forEach(range => {
+                priceFilters.appendChild(createRadioOption('priceFilter', range.value, range.label, range.value === activePriceRange, () => {
+                    activePriceRange = range.value;
+                    resetPageAndRender();
+                }));
+            });
+        }
+
+        function renderAvailabilityFilters() {
+            availabilityFilters.innerHTML = '';
+            availabilityOptions.forEach(option => {
+                availabilityFilters.appendChild(createRadioOption('availabilityFilter', option.value, option.label, option.value === activeAvailability, () => {
+                    activeAvailability = option.value;
+                    resetPageAndRender();
+                }));
+            });
+        }
+
+        function renderQuickCategories() {
+            const existing = new Set(getExistingCategories());
+            quickCategories.innerHTML = '';
+            quickCategoryOptions
+                .filter(option => {
+                    if (option.type === 'flag') {
+                        return window.ultracompProducts.some(product => {
+                            const flags = product.flags || {};
+                            return option.value === 'offer' ? flags.esOferta === true : flags.esNuevo === true;
+                        });
+                    }
+                    if (option.value === 'best-sellers') {
+                        return window.ultracompProducts.some(product => (product.flags || {}).esMasVendido === true || product.bestSeller === true);
+                    }
+                    return existing.has(option.value);
+                })
+                .forEach(option => {
+                    const button = document.createElement('button');
+                    button.className = 'quick-category-pill';
+                    button.type = 'button';
+                    button.dataset.category = option.type === 'flag' ? 'all' : option.value;
+                    button.dataset.flag = option.type === 'flag' ? option.value : 'all';
+                    button.textContent = option.label;
+                    button.addEventListener('click', () => {
+                        activeCategory = option.type === 'flag' ? 'all' : option.value;
+                        activeFlag = option.type === 'flag' ? option.value : 'all';
+                        renderCategoryFilters();
+                        updateQuickCategories();
+                        resetPageAndRender();
+                    });
+                    quickCategories.appendChild(button);
+                });
+            updateQuickCategories();
+        }
+
+        function updateQuickCategories() {
+            quickCategories.querySelectorAll('.quick-category-pill').forEach(button => {
+                button.classList.toggle('active', button.dataset.category === activeCategory && button.dataset.flag === activeFlag);
+            });
+        }
+
+        function applyCategoryFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const requestedCategory = params.get('category');
+            if (requestedCategory && categoryOrder.includes(requestedCategory)) {
+                activeCategory = requestedCategory;
+            }
+            const requestedFlag = String(params.get('flag') || '').trim().toLowerCase();
+            if (['offer', 'new', 'featured', 'recommended', 'bestseller'].includes(requestedFlag)) {
+                activeFlag = requestedFlag;
+                activeCategory = 'all';
+            }
+            const requestedSearch = String(params.get('search') || '').trim();
+            if (requestedSearch) {
+                activeSearch = requestedSearch;
+                searchInput.value = requestedSearch;
+            }
+        }
+
+        function openFiltersPanel() {
+            productsSidebar.classList.add('open');
+            filtersBackdrop.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFiltersPanel() {
+            productsSidebar.classList.remove('open');
+            filtersBackdrop.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function clearFilters() {
+            activeCategory = 'all';
+            activeBrand = 'all';
+            activePriceRange = 'all';
+            activeAvailability = 'all';
+            activeFlag = 'all';
+            activeSort = 'relevance';
+            activeSearch = '';
+            searchInput.value = '';
+            sortSelect.value = 'relevance';
+            renderAllFilters();
+            resetPageAndRender();
+        }
+
+        function renderAllFilters() {
+            renderCategoryFilters();
+            renderBrandFilters();
+            renderPriceFilters();
+            renderAvailabilityFilters();
+            renderQuickCategories();
+        }
+
+        sortSelect.addEventListener('change', () => {
+            activeSort = sortSelect.value;
+            resetPageAndRender();
+        });
+
+        openFiltersBtn.addEventListener('click', openFiltersPanel);
+        closeFiltersBtn.addEventListener('click', closeFiltersPanel);
+        filtersBackdrop.addEventListener('click', closeFiltersPanel);
+        clearFiltersBtn.addEventListener('click', clearFilters);
+
+        async function loadProductsFromApi() {
+            try {
+                const response = await fetch('/api/products?limit=5000');
+                if (!response.ok) throw new Error('No se pudieron cargar productos');
+                const payload = await response.json();
+                if (Array.isArray(payload.products)) {
+                    window.setUltracompProducts(payload.products);
+                } else {
+                    window.setUltracompProducts([]);
+                }
+            } catch (error) {
+                console.warn('Error cargando productos:', error.message);
+                window.setUltracompProducts([]);
+            }
+        }
+
+        async function initCatalog() {
+            await loadSiteContent();
+            await loadProductsFromApi();
+            applyCategoryFromUrl();
+            renderAllFilters();
+            renderProducts();
+        }
+
+        initCatalog();
+    </script>
+    <script src="/ULTRACOMP/mobile-nav.js"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/GENERAL/site-content.js"></script>
+</body>
+</html>

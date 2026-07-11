@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <path id="linea" d="M -38,-38 Q -15,-26 -10,-10 Q -26,-15 -38,-38" fill="#0066ff"/>
+  </defs>
+
+  <g transform="translate(50, 50)">
+    
+    <circle cx="0" cy="-28" r="13" fill="#f5aba6" /> <circle cx="0" cy="28" r="13" fill="#badcf5" />  <circle cx="-28" cy="0" r="13" fill="#cce8c3" /> <circle cx="28" cy="0" r="13" fill="#fceda8" />  <use href="#linea" /> <use href="#linea" transform="rotate(90)" />  <use href="#linea" transform="rotate(180)" /> <use href="#linea" transform="rotate(270)" /> </g>
+</svg>

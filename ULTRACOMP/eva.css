@@ -1,0 +1,163 @@
+.floating-mascot {
+    position: fixed;
+    z-index: 45;
+    right: 24px;
+    bottom: 22px;
+    width: 190px;
+    height: 250px;
+    pointer-events: none;
+    filter: drop-shadow(0 18px 20px rgba(8,19,55,.22));
+}
+
+.floating-mascot .ultracomp-mascot {
+    position: absolute;
+    inset: 34px 0 0;
+    width: 100%;
+    height: calc(100% - 34px);
+    --poster-color: transparent;
+    cursor: grab;
+    pointer-events: auto;
+    touch-action: none;
+    animation: evaFloat 3.2s ease-in-out infinite;
+}
+
+.floating-mascot.is-dragging {
+    user-select: none;
+}
+
+.floating-mascot.is-dragging .ultracomp-mascot {
+    cursor: grabbing;
+    animation-play-state: paused;
+}
+
+.floating-mascot.is-reacting .ultracomp-mascot {
+    animation: evaTapBounce .62s cubic-bezier(.22,.8,.3,1);
+}
+
+.floating-mascot-message {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 9px 12px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px 12px 2px 12px;
+    background: #0e39b0;
+    box-shadow: 0 8px 24px rgba(14,57,176,.24);
+    font: 10px/1.35 system-ui, sans-serif;
+    transition: opacity .45s ease, transform .45s ease, visibility .45s;
+}
+
+.floating-mascot-message strong {
+    font-size: 12px;
+}
+
+.floating-mascot-message.is-hidden {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+@keyframes evaFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes evaTapBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    28% { transform: translateY(-24px) scale(1.04); }
+    55% { transform: translateY(3px) scale(.98); }
+    76% { transform: translateY(-8px) scale(1.01); }
+}
+
+.eva-assistant-panel {
+    position: fixed;
+    z-index: 44;
+    right: 210px;
+    bottom: 26px;
+    width: min(340px, calc(100vw - 28px));
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    border: 1px solid #e2e5ec;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(8,19,55,.2);
+    transform: translateY(14px) scale(.97);
+    transform-origin: right bottom;
+    transition: opacity .22s ease, transform .22s ease, visibility .22s;
+    font-family: system-ui, sans-serif;
+}
+
+.eva-assistant-panel.is-open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.eva-assistant-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 17px;
+    color: #fff;
+    background: #0e39b0;
+}
+
+.eva-assistant-header > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.eva-assistant-header strong { font-size: 16px; }
+.eva-assistant-header span { color: rgba(255,255,255,.75); font-size: 10px; }
+
+.eva-assistant-header button {
+    display: grid;
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 !important;
+    place-items: center;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.eva-assistant-body { padding: 17px; }
+.eva-assistant-body > p { margin: 0 0 14px; color: #606773; font-size: 13px; line-height: 1.5; }
+.eva-search-form { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
+.eva-search-form input { min-width: 0; padding: 11px 12px; border: 1px solid #d8dce5; border-radius: 9px; outline: none; }
+.eva-search-form input:focus { border-color: #0e39b0; box-shadow: 0 0 0 3px rgba(14,57,176,.1); }
+.eva-search-form button { min-height: 42px; padding: 9px 13px; color: #fff; border: 0; border-radius: 9px; background: #111; cursor: pointer; font-weight: 700; }
+.eva-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 13px; }
+.eva-quick-actions a { display: flex; min-height: 39px; align-items: center; justify-content: center; padding: 8px; color: #273044; border: 1px solid #e0e3e9; border-radius: 9px; background: #f8f9fb; font-size: 11px; font-weight: 700; text-align: center; text-decoration: none; }
+.eva-quick-actions a:last-child { grid-column: 1 / -1; color: #fff; border-color: #168b55; background: #168b55; }
+.eva-quick-actions a:hover { color: #fff; border-color: #0e39b0; background: #0e39b0; }
+
+@media (max-width: 640px) {
+    .floating-mascot {
+        right: 4px;
+        bottom: 8px;
+        width: 145px;
+        height: 190px;
+    }
+    .floating-mascot .ultracomp-mascot { height: calc(100% - 30px); }
+    .floating-mascot-message { padding: 7px 9px; font-size: 8px; }
+    .floating-mascot-message strong { font-size: 10px; }
+    .eva-assistant-panel { right: 12px; bottom: 190px; left: 12px; width: auto; }
+    .eva-quick-actions { grid-template-columns: 1fr; }
+    .eva-quick-actions a:last-child { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-mascot .ultracomp-mascot,
+    .floating-mascot.is-reacting .ultracomp-mascot { animation: none; }
+}

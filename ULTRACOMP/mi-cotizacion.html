@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cotización - Ultracomp</title>
+    <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css">
+    <script type="module" src="/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body class="quote-cart-page">
+    <header>
+        <div class="container">
+            <nav>
+                <a class="nav-brand" href="/ULTRACOMP/index.html">
+                    <img src="/GENERAL/logo-ultrasoft.svg" alt="" class="ultrasoft-logo">
+                    <span>ULTRACOMP</span>
+                </a>
+                <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="primaryNavigation" aria-label="Abrir menú">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="nav-links" id="primaryNavigation">
+                    <a href="/ULTRACOMP/index.html">Ultracomp</a>
+                    <a href="/ULTRACOMP/productos.html">Productos</a>
+                    <a href="/ULTRASOFT/ultrasoft.html">Ultrasoft</a>
+                    <a href="/mi-cotizacion" class="quote-cart-button">
+                        Mi cotización <span id="quoteCartCounter"></span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="quote-cart-hero">
+        <div class="container">
+            <h1>Mi cotización</h1>
+            <p>Revisa los productos que quieres cotizar y envíalos por WhatsApp en un solo mensaje.</p>
+            <div class="quote-cart-counter" id="quoteCartPageCounter">0 productos agregados</div>
+        </div>
+    </section>
+
+    <section class="quote-cart-content">
+        <div class="container">
+            <!-- Estado vacío -->
+            <div id="quoteCartEmptyState" class="quote-cart-empty-state" style="display: none;">
+                <div class="empty-state-content">
+                    <h2>Tu cotización está vacía</h2>
+                    <p>Agrega productos desde el catálogo para solicitar precio, disponibilidad o asesoría.</p>
+                    <a href="/ULTRACOMP/productos.html" class="cta-button">Ver productos</a>
+                </div>
+            </div>
+
+            <!-- Contenido con productos -->
+            <div id="quoteCartWithProducts" class="quote-cart-layout">
+                <!-- Columna izquierda: Productos -->
+                <div class="quote-cart-products-column">
+                    <h2>Productos agregados</h2>
+                    <div id="quoteCartProductsList" class="quote-cart-products-list"></div>
+                </div>
+
+                <!-- Columna derecha: Resumen -->
+                <div class="quote-cart-summary-column">
+                    <div class="quote-cart-summary-card">
+                        <h3>Resumen de cotización</h3>
+                        <div class="summary-stats">
+                            <div class="summary-stat">
+                                <span class="stat-label">Productos diferentes:</span>
+                                <span class="stat-value" id="summaryDifferentProducts">0</span>
+                            </div>
+                            <div class="summary-stat">
+                                <span class="stat-label">Cantidad total:</span>
+                                <span class="stat-value" id="summaryTotalUnits">0 unidades</span>
+                            </div>
+                        </div>
+                        <div class="summary-message">
+                            <p>No estás comprando todavía.</p>
+                            <p>Esta solicitud será enviada para confirmar precio, disponibilidad y forma de pago.</p>
+                        </div>
+                        <div class="summary-actions">
+                            <button type="button" class="cta-button" onclick="sendQuoteCartByWhatsApp()">
+                                Enviar cotización por WhatsApp
+                            </button>
+                            <a href="/ULTRACOMP/productos.html" class="secondary-button">
+                                Seguir agregando productos
+                            </a>
+                            <button type="button" class="danger-button" onclick="clearQuoteCart()">
+                                Vaciar cotización
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Ultracomp - Todos los derechos reservados</p>
+            <p><a href="/ULTRASOFT/ultrasoft.html" style="color: white;">Ver Ultrasoft</a></p>
+        </div>
+    </footer>
+
+    <script src="/ULTRACOMP/quote-cart.js"></script>
+    <script>
+        async function loadProductsFromApi() {
+            try {
+                const response = await fetch('/api/products?limit=5000');
+                if (!response.ok) throw new Error('No se pudieron cargar productos');
+                const payload = await response.json();
+                if (Array.isArray(payload.products)) {
+                    window.ultracompProducts = payload.products;
+                    syncQuoteCartStock(payload.products);
+                } else {
+                    window.ultracompProducts = [];
+                }
+            } catch (error) {
+                console.warn('Error cargando productos:', error.message);
+                window.ultracompProducts = [];
+            }
+        }
+
+        async function initQuoteCartPage() {
+            await loadProductsFromApi();
+            renderQuoteCartPage();
+        }
+
+        // Renderizar la página de cotización
+        function renderQuoteCartPage() {
+            const cart = getQuoteCart();
+            const emptyState = document.getElementById('quoteCartEmptyState');
+            const withProducts = document.getElementById('quoteCartWithProducts');
+            const productsList = document.getElementById('quoteCartProductsList');
+            const pageCounter = document.getElementById('quoteCartPageCounter');
+            const summaryDifferentProducts = document.getElementById('summaryDifferentProducts');
+            const summaryTotalUnits = document.getElementById('summaryTotalUnits');
+
+            // Actualizar contador
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            pageCounter.textContent = `${totalItems} producto${totalItems === 1 ? '' : 's'} agregado${totalItems === 1 ? '' : 's'}`;
+
+            // Mostrar estado vacío o productos
+            if (cart.length === 0) {
+                emptyState.style.display = 'block';
+                withProducts.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            withProducts.style.display = 'grid';
+
+            // Actualizar resumen
+            summaryDifferentProducts.textContent = cart.length;
+            summaryTotalUnits.textContent = `${totalItems} unidad${totalItems === 1 ? '' : 'es'}`;
+
+            // Renderizar productos
+            productsList.innerHTML = '';
+            cart.forEach(item => {
+                const productCard = document.createElement('div');
+                productCard.className = 'quote-cart-product-card';
+                
+                const priceText = item.price || 'Precio: Consultar';
+                
+                productCard.innerHTML = `
+                    <div class="product-card-image">
+                        <img src="${item.image}" alt="${item.name}">
+                    </div>
+                    <div class="product-card-details">
+                        <h3>${item.name}</h3>
+                        <p class="product-code">Código: ${item.code || item.codigo || item.sku || item.productCode || item.id}</p>
+                        <p class="product-id">ID: ${item.id}</p>
+                        <p class="product-price">${priceText}</p>
+                        <div class="product-quantity">
+                            <button type="button" class="quantity-btn" onclick="updateQuoteCartItemQuantity('${item.id}', -1)">-</button>
+                            <span class="quantity-value">${item.quantity}</span>
+                            <button type="button" class="quantity-btn" onclick="updateQuoteCartItemQuantity('${item.id}', 1)">+</button>
+                        </div>
+                        <button type="button" class="remove-product-btn" onclick="removeFromQuoteCart('${item.id}')">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                
+                productsList.appendChild(productCard);
+            });
+        }
+
+        // Sobrescribir la función de actualización para que también renderice la página
+        const originalUpdateQuoteCartCounter = updateQuoteCartCounter;
+        updateQuoteCartCounter = function() {
+            originalUpdateQuoteCartCounter();
+            if (document.getElementById('quoteCartPageCounter')) {
+                renderQuoteCartPage();
+            }
+        };
+
+        // Sobrescribir la función de renderizado del modal para que también actualice la página
+        const originalRenderQuoteCartModal = renderQuoteCartModal;
+        renderQuoteCartModal = function() {
+            originalRenderQuoteCartModal();
+            if (document.getElementById('quoteCartPageCounter')) {
+                renderQuoteCartPage();
+            }
+        };
+
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            initQuoteCartPage();
+        });
+    </script>
+    <script src="/ULTRACOMP/mobile-nav.js"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/GENERAL/site-content.js"></script>
+</body>
+</html>
