@@ -3597,7 +3597,9 @@ function serveStatic(req, res, url) {
         '.jpg': 'image/jpeg',
         '.jpeg': 'image/jpeg',
         '.webp': 'image/webp',
-        '.tiff': 'image/tiff'
+        '.tiff': 'image/tiff',
+        '.glb': 'model/gltf-binary',
+        '.gltf': 'model/gltf+json'
     };
 
     const headers = {
