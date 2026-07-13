@@ -3436,44 +3436,6 @@ async function getProductsByFlag(flagType, limit) {
     });
 }
 
-// Actualizar findImageForProduct para usar producto_imagenes primero
-function findImageForProduct(row) {
-    // Primero buscar en producto_imagenes si está disponible
-    if (productDbReady) {
-        // Esta función se llama desde normalizeProduct, pero necesitamos acceso asíncrono
-        // Por ahora mantenemos la lógica original, pero podríamos mejorarla
-    }
-
-    const modelTokens = normalizeText(row.nombre)
-        .split(' ')
-        .filter(token => token.length >= 4 && /[A-Z]/.test(token) && /[0-9]/.test(token));
-
-    const directCandidates = [row.articulo_codigo, ...modelTokens]
-        .map(normalizeText)
-        .filter(value => value && value !== '0')
-        .filter(value => value.length >= 4 || (/[A-Z]/.test(value) && /[0-9]/.test(value) && value.length >= 3));
-
-    for (const candidate of directCandidates) {
-        const found = imageIndex.find(image => image.normalized.includes(candidate));
-        if (found) return found.path;
-    }
-
-    const nameTokens = normalizeText(row.nombre)
-        .split(' ')
-        .filter(token => token.length >= 3 && !/^\d+$/.test(token));
-
-    let best = null;
-    for (const image of imageIndex) {
-        let score = 0;
-        for (const token of nameTokens) {
-            if (image.tokens.has(token) || image.normalized.includes(token)) score += token.length >= 5 ? 2 : 1;
-        }
-        if (score >= 8 && (!best || score > best.score)) best = { score, image };
-    }
-
-    return best ? best.image.path : '/IMAGENES/producto-sin-imagen.svg';
-}
-
 async function deactivateProductInMysql(id) {
     const numericId = Number(id);
     if (!Number.isInteger(numericId) || numericId <= 0) return false;
