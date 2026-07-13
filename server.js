@@ -3620,9 +3620,25 @@ function serveStatic(req, res, url) {
     fs.createReadStream(normalized).pipe(res);
 }
 
-const server = http.createServer(async (req, res) => {
+let initPromise = null;
+
+async function prepareApp() {
+    if (!initPromise) {
+        initPromise = initDatabase().catch(error => {
+            if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+                console.error('Could not start server:', error.message);
+                throw error;
+            }
+            console.error('Could not initialize database. Using memory fallback:', error.message);
+        });
+    }
+    return initPromise;
+}
+
+async function requestHandler(req, res) {
     const url = new URL(req.url, `http://${req.headers.host}`);
     try {
+        await prepareApp();
         if (url.pathname === '/robots.txt') {
             const body = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /login/\nSitemap: ${SITE_URL}/sitemap.xml\n`;
             res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', ...securityHeaders() });
@@ -3678,7 +3694,9 @@ const server = http.createServer(async (req, res) => {
         console.error(error);
         sendJson(res, 500, { message: 'Error interno del servidor' });
     }
-});
+}
+
+const server = http.createServer(requestHandler);
 
 server.on('error', error => {
     if (error.code === 'EADDRINUSE') {
@@ -3698,23 +3716,20 @@ async function shutdown(signal) {
     setTimeout(() => process.exit(1), 10000).unref();
 }
 
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+if (require.main === module) {
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('SIGINT', () => shutdown('SIGINT'));
 
-initDatabase()
-    .then(() => {
+    prepareApp()
+        .then(() => {
         server.listen(PORT, () => {
             console.log(`Ultra server running at http://localhost:${PORT}`);
         });
-    })
-    .catch(error => {
-        if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
-            console.error('Could not start server:', error.message);
+        })
+        .catch(() => {
             process.exitCode = 1;
-            return;
-        }
-        console.error('Could not initialize database. Using memory fallback:', error.message);
-        server.listen(PORT, () => {
-            console.log(`Ultra server running with fallback at http://localhost:${PORT}`);
         });
-    });
+}
+
+module.exports = requestHandler;
+module.exports.server = server;
