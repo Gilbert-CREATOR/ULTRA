@@ -65,6 +65,13 @@ function warnMissingOwnerCredentials() {
     );
 }
 
+function getMissingRequiredEnv() {
+    return [
+        ['ADMIN_EMAIL', ADMIN_EMAIL],
+        ['ADMIN_PASSWORD', ADMIN_PASSWORD]
+    ].filter(([, value]) => !value).map(([key]) => key);
+}
+
 function loadEnv(filePath) {
     if (!fs.existsSync(filePath)) return;
 
@@ -85,8 +92,9 @@ function loadStaticProducts() {
 }
 
 async function initDatabase() {
-    if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
-        throw new Error('ADMIN_EMAIL y ADMIN_PASSWORD son obligatorios para iniciar el servidor.');
+    const missingRequiredEnv = getMissingRequiredEnv();
+    if (missingRequiredEnv.length) {
+        console.warn(`Variables administrativas faltantes: ${missingRequiredEnv.join(', ')}. El sitio público seguirá usando fallback; el panel admin no estará disponible.`);
     }
     warnMissingOwnerCredentials();
     memoryStore.content = getDefaultContent();
@@ -712,6 +720,7 @@ function parseBoundedInteger(value, fallback, min, max) {
 async function handleApi(req, res, url) {
     if (req.method === 'GET' && url.pathname === '/api/health') {
         const timestamp = new Date().toISOString();
+        const missingEnv = getMissingRequiredEnv();
         if (productDbReady) {
             try {
                 const [rows] = await mysqlPool.query(`
@@ -732,6 +741,8 @@ async function handleApi(req, res, url) {
                     database: 'connected',
                     mode: 'mysql',
                     productsCount: Number(rows[0].productsCount || 0),
+                    adminConfigured: missingEnv.length === 0,
+                    missingEnv,
                     timestamp,
                     version: packageInfo.version
                 });
@@ -742,6 +753,8 @@ async function handleApi(req, res, url) {
                     database: 'disconnected',
                     mode: 'mysql',
                     productsCount: null,
+                    adminConfigured: missingEnv.length === 0,
+                    missingEnv,
                     timestamp,
                     version: packageInfo.version
                 });
@@ -754,6 +767,8 @@ async function handleApi(req, res, url) {
             database: 'disconnected',
             mode: 'memory',
             productsCount: 0,
+            adminConfigured: missingEnv.length === 0,
+            missingEnv,
             timestamp,
             version: packageInfo.version
         });
@@ -2064,7 +2079,7 @@ async function ensureUltraTables() {
         MODIFY role ENUM('owner','superadmin','editor','ventas') NOT NULL DEFAULT 'editor'
     `);
     const [adminCount] = await mysqlPool.query('SELECT COUNT(*) AS total FROM web_admin_users');
-    if (!Number(adminCount[0].total)) {
+    if (!Number(adminCount[0].total) && ADMIN_EMAIL && ADMIN_PASSWORD) {
         await mysqlPool.query(
             `INSERT INTO web_admin_users (email, name, password_hash, role, active)
              VALUES (?, 'Administrador principal', ?, 'superadmin', 1)`,
@@ -3625,10 +3640,6 @@ let initPromise = null;
 async function prepareApp() {
     if (!initPromise) {
         initPromise = initDatabase().catch(error => {
-            if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
-                console.error('Could not start server:', error.message);
-                throw error;
-            }
             console.error('Could not initialize database. Using memory fallback:', error.message);
         });
     }
