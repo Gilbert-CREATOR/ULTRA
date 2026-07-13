@@ -72,6 +72,32 @@ function getMissingRequiredEnv() {
     ].filter(([, value]) => !value).map(([key]) => key);
 }
 
+function getEnvAdminProfile(email, password) {
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const cleanPassword = String(password || '');
+    const adminEmail = String(ADMIN_EMAIL || '').trim().toLowerCase();
+
+    if (OWNER_EMAIL && OWNER_PASSWORD && cleanEmail === OWNER_EMAIL && cleanPassword === OWNER_PASSWORD) {
+        return {
+            email: OWNER_EMAIL,
+            name: OWNER_NAME.slice(0, 120),
+            role: 'owner',
+            password: OWNER_PASSWORD
+        };
+    }
+
+    if (adminEmail && ADMIN_PASSWORD && cleanEmail === adminEmail && cleanPassword === ADMIN_PASSWORD) {
+        return {
+            email: adminEmail,
+            name: 'Administrador principal',
+            role: 'superadmin',
+            password: ADMIN_PASSWORD
+        };
+    }
+
+    return null;
+}
+
 function loadEnv(filePath) {
     if (!fs.existsSync(filePath)) return;
 
@@ -853,12 +879,35 @@ async function handleApi(req, res, url) {
         }
         const body = await readBody(req);
         const email = String(body.email || '').trim().toLowerCase();
+        const password = String(body.password || '');
         const [users] = await mysqlPool.query(
             'SELECT id, password_hash, role FROM web_admin_users WHERE email = ? AND active = 1 LIMIT 1',
             [email]
         );
-        const user = users[0];
-        const ok = Boolean(user && verifyPassword(body.password, user.password_hash));
+        let user = users[0];
+        let ok = Boolean(user && verifyPassword(password, user.password_hash));
+        if (!ok) {
+            const envProfile = getEnvAdminProfile(email, password);
+            if (envProfile) {
+                await mysqlPool.query(
+                    `INSERT INTO web_admin_users (email, name, password_hash, role, active)
+                     VALUES (?, ?, ?, ?, 1)
+                     ON DUPLICATE KEY UPDATE
+                        name = VALUES(name),
+                        password_hash = VALUES(password_hash),
+                        role = VALUES(role),
+                        active = 1,
+                        updated_at = NOW()`,
+                    [envProfile.email, envProfile.name, hashPassword(envProfile.password), envProfile.role]
+                );
+                const [syncedUsers] = await mysqlPool.query(
+                    'SELECT id, password_hash, role FROM web_admin_users WHERE email = ? AND active = 1 LIMIT 1',
+                    [envProfile.email]
+                );
+                user = syncedUsers[0];
+                ok = Boolean(user && verifyPassword(password, user.password_hash));
+            }
+        }
         if (!ok) {
             sendJson(res, 401, { ok: false, message: 'Credenciales incorrectas' });
             return true;
