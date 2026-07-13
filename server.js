@@ -74,24 +74,26 @@ function getMissingRequiredEnv() {
 
 function getEnvAdminProfile(email, password) {
     const cleanEmail = String(email || '').trim().toLowerCase();
-    const cleanPassword = String(password || '');
+    const cleanPassword = String(password || '').trim();
     const adminEmail = String(ADMIN_EMAIL || '').trim().toLowerCase();
+    const adminPassword = String(ADMIN_PASSWORD || '').trim();
+    const ownerPassword = String(OWNER_PASSWORD || '').trim();
 
-    if (OWNER_EMAIL && OWNER_PASSWORD && cleanEmail === OWNER_EMAIL && cleanPassword === OWNER_PASSWORD) {
+    if (OWNER_EMAIL && ownerPassword && cleanEmail === OWNER_EMAIL && cleanPassword === ownerPassword) {
         return {
             email: OWNER_EMAIL,
             name: OWNER_NAME.slice(0, 120),
             role: 'owner',
-            password: OWNER_PASSWORD
+            password: ownerPassword
         };
     }
 
-    if (adminEmail && ADMIN_PASSWORD && cleanEmail === adminEmail && cleanPassword === ADMIN_PASSWORD) {
+    if (adminEmail && adminPassword && cleanEmail === adminEmail && cleanPassword === adminPassword) {
         return {
             email: adminEmail,
             name: 'Administrador principal',
             role: 'superadmin',
-            password: ADMIN_PASSWORD
+            password: adminPassword
         };
     }
 
@@ -768,6 +770,7 @@ async function handleApi(req, res, url) {
                     mode: 'mysql',
                     productsCount: Number(rows[0].productsCount || 0),
                     adminConfigured: missingEnv.length === 0,
+                    ownerConfigured: Boolean(OWNER_EMAIL && String(OWNER_PASSWORD || '').trim()),
                     missingEnv,
                     timestamp,
                     version: packageInfo.version
@@ -780,6 +783,7 @@ async function handleApi(req, res, url) {
                     mode: 'mysql',
                     productsCount: null,
                     adminConfigured: missingEnv.length === 0,
+                    ownerConfigured: Boolean(OWNER_EMAIL && String(OWNER_PASSWORD || '').trim()),
                     missingEnv,
                     timestamp,
                     version: packageInfo.version
@@ -794,6 +798,7 @@ async function handleApi(req, res, url) {
             mode: 'memory',
             productsCount: 0,
             adminConfigured: missingEnv.length === 0,
+            ownerConfigured: Boolean(OWNER_EMAIL && String(OWNER_PASSWORD || '').trim()),
             missingEnv,
             timestamp,
             version: packageInfo.version
