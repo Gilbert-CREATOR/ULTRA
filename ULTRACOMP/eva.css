@@ -75,6 +75,7 @@
 }
 
 .eva-fallback-eye {
+    position: absolute;
     z-index: 2;
     top: 48%;
     width: 28%;
