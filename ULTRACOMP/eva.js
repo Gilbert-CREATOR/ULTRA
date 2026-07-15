@@ -11,6 +11,16 @@
                     shadow-intensity="1.2" shadow-softness=".8" exposure="1.05"
                     environment-image="neutral" interaction-prompt="none"
                     loading="eager"></model-viewer>
+                <div class="eva-visual-fallback" aria-hidden="true">
+                    <span class="eva-fallback-shadow"></span>
+                    <span class="eva-fallback-arm eva-fallback-arm-left"></span>
+                    <span class="eva-fallback-arm eva-fallback-arm-right"></span>
+                    <span class="eva-fallback-body"></span>
+                    <span class="eva-fallback-head">
+                        <span class="eva-fallback-eye eva-fallback-eye-left"></span>
+                        <span class="eva-fallback-eye eva-fallback-eye-right"></span>
+                    </span>
+                </div>
             </aside>
             <section class="eva-assistant-panel" id="evaAssistantPanel" aria-hidden="true" aria-label="Asistente EVA">
                 <header class="eva-assistant-header">
@@ -37,13 +47,14 @@
     }
 
     const mascot = document.querySelector('.floating-mascot');
-    const dragTarget = mascot && mascot.querySelector('.ultracomp-mascot');
+    const model = mascot && mascot.querySelector('.ultracomp-mascot');
+    const dragTargets = mascot ? Array.from(mascot.querySelectorAll('.ultracomp-mascot, .eva-visual-fallback')) : [];
     const message = document.querySelector('.floating-mascot-message');
     const assistantPanel = document.getElementById('evaAssistantPanel');
     const closeAssistant = document.getElementById('closeEvaAssistant');
     const searchForm = document.getElementById('evaSearchForm');
     const searchInput = document.getElementById('evaSearchInput');
-    if (!mascot || !dragTarget) return;
+    if (!mascot || !dragTargets.length) return;
 
     const positionKey = 'ultracompEvaPositionV2';
     let dragState = null;
@@ -78,7 +89,31 @@
         }
     }
 
-    dragTarget.addEventListener('pointerdown', event => {
+    function showEvaFallback() {
+        mascot.classList.add('eva-model-failed');
+    }
+
+    function hideEvaFallback() {
+        mascot.classList.remove('eva-model-failed');
+    }
+
+    if (model) {
+        model.addEventListener('load', hideEvaFallback);
+        model.addEventListener('error', showEvaFallback);
+        model.addEventListener('progress', event => {
+            if (Number(event.detail?.totalProgress || 0) > 0) hideEvaFallback();
+        });
+
+        window.setTimeout(() => {
+            if (!customElements.get('model-viewer')) showEvaFallback();
+        }, 2500);
+
+        customElements.whenDefined?.('model-viewer')?.catch(showEvaFallback);
+    } else {
+        showEvaFallback();
+    }
+
+    function startDrag(event) {
         const rect = mascot.getBoundingClientRect();
         dragState = {
             pointerId: event.pointerId,
@@ -88,19 +123,19 @@
             offsetX: event.clientX - rect.left,
             offsetY: event.clientY - rect.top
         };
-        dragTarget.setPointerCapture(event.pointerId);
+        event.currentTarget.setPointerCapture?.(event.pointerId);
         mascot.classList.add('is-dragging');
         event.preventDefault();
-    });
+    }
 
-    dragTarget.addEventListener('pointermove', event => {
+    function moveDrag(event) {
         if (!dragState || event.pointerId !== dragState.pointerId) return;
         if (Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY) > 7) {
             dragState.moved = true;
         }
         if (!dragState.moved) return;
         setPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
-    });
+    }
 
     function finishDrag(event) {
         if (!dragState || event.pointerId !== dragState.pointerId) return;
@@ -125,8 +160,12 @@
         }
     }
 
-    dragTarget.addEventListener('pointerup', finishDrag);
-    dragTarget.addEventListener('pointercancel', finishDrag);
+    dragTargets.forEach(target => {
+        target.addEventListener('pointerdown', startDrag);
+        target.addEventListener('pointermove', moveDrag);
+        target.addEventListener('pointerup', finishDrag);
+        target.addEventListener('pointercancel', finishDrag);
+    });
     window.addEventListener('resize', () => {
         const rect = mascot.getBoundingClientRect();
         setPosition(rect.left, rect.top, true);

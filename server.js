@@ -885,15 +885,12 @@ async function handleApi(req, res, url) {
         const body = await readBody(req);
         const email = String(body.email || '').trim().toLowerCase();
         const password = String(body.password || '');
-        const [users] = await mysqlPool.query(
-            'SELECT id, password_hash, role FROM web_admin_users WHERE email = ? AND active = 1 LIMIT 1',
-            [email]
-        );
-        let user = users[0];
-        let ok = Boolean(user && verifyPassword(password, user.password_hash));
-        if (!ok) {
-            const envProfile = getEnvAdminProfile(email, password);
-            if (envProfile) {
+
+        const envProfile = getEnvAdminProfile(email, password);
+        if (envProfile) {
+            let userId = null;
+            try {
+                if (!mysqlPool) throw new Error('MySQL no está inicializado');
                 await mysqlPool.query(
                     `INSERT INTO web_admin_users (email, name, password_hash, role, active)
                      VALUES (?, ?, ?, ?, 1)
@@ -909,10 +906,44 @@ async function handleApi(req, res, url) {
                     'SELECT id, password_hash, role FROM web_admin_users WHERE email = ? AND active = 1 LIMIT 1',
                     [envProfile.email]
                 );
-                user = syncedUsers[0];
-                ok = Boolean(user && verifyPassword(password, user.password_hash));
+                userId = syncedUsers[0]?.id || null;
+            } catch (error) {
+                console.warn('No se pudo sincronizar usuario admin desde variables de entorno:', error.message);
             }
+
+            const token = crypto.randomBytes(32).toString('base64url');
+            const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+            const expiresAt = Date.now() + SESSION_TTL_MS;
+            adminSessions.set(tokenHash, { expiresAt, userId, role: envProfile.role });
+
+            if (userId) {
+                try {
+                    await mysqlPool.query(
+                        'INSERT INTO web_admin_sessions (token_hash, expires_at, user_id, role) VALUES (?, ?, ?, ?)',
+                        [tokenHash, new Date(expiresAt), userId, envProfile.role]
+                    );
+                    await mysqlPool.query('UPDATE web_admin_users SET last_login_at = NOW() WHERE id = ?', [userId]);
+                } catch (error) {
+                    console.warn('No se pudo guardar la sesión admin en MySQL:', error.message);
+                }
+            }
+
+            loginAttempts.delete(client);
+            sendJson(res, 200, { ok: true, role: envProfile.role, owner: envProfile.role === 'owner' }, { 'Set-Cookie': sessionCookie(token) });
+            return true;
         }
+
+        if (!mysqlPool) {
+            sendJson(res, 503, { ok: false, message: 'Base de datos no disponible. Revisa las variables MYSQL_* del servidor.' });
+            return true;
+        }
+
+        const [users] = await mysqlPool.query(
+            'SELECT id, password_hash, role FROM web_admin_users WHERE email = ? AND active = 1 LIMIT 1',
+            [email]
+        );
+        const user = users[0];
+        const ok = Boolean(user && verifyPassword(password, user.password_hash));
         if (!ok) {
             sendJson(res, 401, { ok: false, message: 'Credenciales incorrectas' });
             return true;

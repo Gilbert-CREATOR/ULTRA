@@ -6,7 +6,7 @@
     <title>Productos - Ultracomp</title>
     <link rel="stylesheet" href="/GENERAL/ultra.css">
     <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css">
-    <link rel="stylesheet" href="/ULTRACOMP/eva.css">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css?v=20260715-eva-fallback">
     <script type="module" src="/GENERAL/model-viewer.min.js?v=20260713"></script>
 </head>
 <body class="products-catalog-page">
@@ -522,6 +522,13 @@
         function debounce(fn, wait){ let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn.apply(this,args), wait); }; }
 
         searchInput.addEventListener('input', debounce(()=>{ activeSearch = searchInput.value; resetPageAndRender(); }, 180));
+        searchInput.addEventListener('keydown', event => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            activeSearch = searchInput.value.trim();
+            searchInput.value = activeSearch;
+            resetPageAndRender();
+        });
 
         function createRadioOption(groupName, value, label, checked, onChange) {
             const option = document.createElement('label');
@@ -714,7 +721,7 @@
         initCatalog();
     </script>
     <script src="/ULTRACOMP/mobile-nav.js"></script>
-    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260715-eva-fallback"></script>
     <script src="/GENERAL/site-content.js"></script>
 </body>
 </html>

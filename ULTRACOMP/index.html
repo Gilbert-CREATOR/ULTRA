@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/GENERAL/ultra.css?v=20260708-fix-layout">
     <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css?v=20260708-fix-layout">
     <link rel="stylesheet" href="/ULTRACOMP/inicio.css?v=20260709-section-layout-fix">
-    <link rel="stylesheet" href="/ULTRACOMP/eva.css?v=20260708-fix-layout">
+    <link rel="stylesheet" href="/ULTRACOMP/eva.css?v=20260715-eva-fallback">
     <link rel="stylesheet" href="/GENERAL/scroll-testimonials.css?v=20260708-fix-layout">
     <script type="module" src="/GENERAL/model-viewer.min.js?v=20260713"></script>
 </head>
@@ -92,6 +92,16 @@
             environment-image="neutral"
             interaction-prompt="none"
             loading="eager"></model-viewer>
+        <div class="eva-visual-fallback" aria-hidden="true">
+            <span class="eva-fallback-shadow"></span>
+            <span class="eva-fallback-arm eva-fallback-arm-left"></span>
+            <span class="eva-fallback-arm eva-fallback-arm-right"></span>
+            <span class="eva-fallback-body"></span>
+            <span class="eva-fallback-head">
+                <span class="eva-fallback-eye eva-fallback-eye-left"></span>
+                <span class="eva-fallback-eye eva-fallback-eye-right"></span>
+            </span>
+        </div>
     </aside>
 
     <section class="eva-assistant-panel" id="evaAssistantPanel" aria-hidden="true" aria-label="Asistente EVA">
@@ -410,7 +420,7 @@
 
     <script src="/ULTRACOMP/catalog-helpers.js"></script>
     <script src="/ULTRACOMP/quote-cart.js"></script>
-    <script src="/ULTRACOMP/eva.js?v=20260709-filters-ultrasoft"></script>
+    <script src="/ULTRACOMP/eva.js?v=20260715-eva-fallback"></script>
     <script src="/GENERAL/scroll-testimonials.js?v=20260708-fix-layout"></script>
     <script src="/GENERAL/site-content.js?v=20260708-fix-layout"></script>
     <script>
