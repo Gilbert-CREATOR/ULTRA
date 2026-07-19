@@ -11,9 +11,9 @@
     place-items: center;
     padding: 24px;
     background:
-        radial-gradient(circle at 72% 44%, rgba(0, 102, 255, 0.16), transparent 34%),
-        radial-gradient(circle at 30% 62%, rgba(186, 220, 245, 0.28), transparent 30%),
-        linear-gradient(135deg, #f7f9fc 0%, #eef4ff 48%, #ffffff 100%);
+        radial-gradient(circle at 50% 38%, rgba(18, 61, 187, 0.16), transparent 34%),
+        radial-gradient(circle at 18% 74%, rgba(28, 168, 236, 0.13), transparent 30%),
+        linear-gradient(145deg, #f8fbff 0%, #eef5ff 50%, #ffffff 100%);
     color: #111827;
     pointer-events: all;
     opacity: 1;
@@ -28,20 +28,25 @@
 
 .ultra-intro-stage {
     position: relative;
-    width: min(920px, 100%);
+    width: min(980px, 100%);
     min-height: min(560px, 74vh);
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(22px, 5vw, 72px);
     isolation: isolate;
 }
 
 .ultra-intro-orbit {
     position: absolute;
-    width: min(480px, 76vw);
+    left: 50%;
+    top: 50%;
+    width: min(410px, 58vw);
     aspect-ratio: 1;
     border-radius: 50%;
     border: 1px solid rgba(0, 102, 255, 0.14);
-    box-shadow: 0 0 70px rgba(0, 102, 255, 0.12);
+    box-shadow: 0 0 72px rgba(0, 102, 255, 0.1);
+    translate: -50% -50%;
     animation: ultraIntroOrbit 2.1s cubic-bezier(0.2, 0.9, 0.25, 1) both;
 }
 
@@ -63,14 +68,36 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: clamp(14px, 3vw, 26px);
+    justify-content: center;
+    gap: clamp(14px, 2.2vw, 24px);
+    width: min(720px, 78vw);
+    min-height: clamp(132px, 16vw, 190px);
+    padding: clamp(22px, 4vw, 42px) clamp(26px, 5vw, 58px);
+    border: 1px solid rgba(18, 61, 187, 0.12);
+    border-radius: clamp(30px, 4vw, 48px);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 246, 255, 0.7)),
+        radial-gradient(circle at 18% 30%, rgba(186, 220, 245, 0.28), transparent 35%);
+    box-shadow:
+        0 36px 95px rgba(18, 61, 187, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
     z-index: 2;
     filter: drop-shadow(0 26px 42px rgba(0, 64, 190, 0.18));
     animation: ultraIntroLogoLand 2.05s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.ultra-intro-logo::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    pointer-events: none;
+}
+
 .ultra-intro-mark {
-    width: clamp(106px, 13vw, 172px);
+    flex: 0 0 auto;
+    width: clamp(82px, 8.8vw, 124px);
     height: auto;
     overflow: visible;
 }
@@ -102,12 +129,13 @@
 .ultra-intro-word {
     position: relative;
     overflow: hidden;
-    font-size: clamp(2.3rem, 7vw, 6.2rem);
+    font-size: clamp(2.6rem, 6.2vw, 5.35rem);
     font-weight: 950;
-    line-height: 0.9;
-    letter-spacing: 0.04em;
+    line-height: 0.86;
+    letter-spacing: 0.015em;
     color: #123dbb;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .ultra-intro-word::after {
@@ -126,11 +154,11 @@
 }
 
 .ultra-intro-eva {
-    position: absolute;
-    right: min(4vw, 54px);
-    bottom: clamp(18px, 7vh, 66px);
-    width: clamp(118px, 17vw, 196px);
-    height: clamp(150px, 22vw, 252px);
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(106px, 13vw, 168px);
+    height: clamp(134px, 17vw, 216px);
+    margin-left: clamp(-42px, -3vw, -20px);
     z-index: 3;
     transform-origin: 50% 80%;
     animation: ultraIntroEvaEnter 1.5s cubic-bezier(0.2, 1, 0.2, 1) 0.38s both,
@@ -225,10 +253,10 @@
 
 .ultra-intro-spark {
     position: absolute;
-    right: 34%;
-    top: 28%;
-    width: 18px;
-    height: 18px;
+    left: -18%;
+    top: 22%;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: #22c3f3;
     box-shadow: 0 0 0 8px rgba(34, 195, 243, 0.13), 0 0 24px rgba(34, 195, 243, 0.55);
@@ -238,9 +266,9 @@
 
 .ultra-intro-progress {
     position: absolute;
-    bottom: 0;
+    bottom: 8%;
     left: 50%;
-    width: min(360px, 62vw);
+    width: min(330px, 56vw);
     height: 4px;
     transform: translateX(-50%);
     overflow: hidden;
@@ -292,8 +320,8 @@
 }
 
 @keyframes ultraIntroEvaEnter {
-    0% { opacity: 0; transform: translate(90px, 36px) rotate(10deg) scale(0.78); }
-    72% { opacity: 1; transform: translate(-12px, -4px) rotate(-5deg) scale(1.04); }
+    0% { opacity: 0; transform: translate(70px, 32px) rotate(8deg) scale(0.78); }
+    72% { opacity: 1; transform: translate(-8px, -4px) rotate(-4deg) scale(1.04); }
     100% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
 }
 
@@ -328,23 +356,42 @@
 @media (max-width: 700px) {
     .ultra-intro-stage {
         min-height: 70vh;
+        flex-direction: column;
+        gap: 12px;
     }
 
     .ultra-intro-logo {
         flex-direction: column;
-        gap: 14px;
+        width: min(420px, 92vw);
+        min-height: 240px;
+        gap: 16px;
+        padding: 28px 22px;
         text-align: center;
     }
 
+    .ultra-intro-mark {
+        width: 96px;
+    }
+
     .ultra-intro-word {
-        font-size: clamp(2.35rem, 13vw, 4rem);
+        font-size: clamp(2.35rem, 12vw, 4rem);
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
 
     .ultra-intro-eva {
-        right: 5vw;
-        bottom: 10px;
+        margin-left: 0;
+        margin-top: -20px;
         width: 116px;
         height: 148px;
+    }
+
+    .ultra-intro-orbit {
+        width: min(330px, 78vw);
+    }
+
+    .ultra-intro-progress {
+        bottom: 2%;
     }
 }
 
