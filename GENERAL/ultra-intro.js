@@ -2,7 +2,8 @@
     const path = window.location.pathname.toLowerCase();
     const title = document.title.toLowerCase();
     const body = document.body;
-    const isUltrasoft = path.includes('ultrasoft') || title.includes('ultrasoft') || body.classList.contains('ultrasoft-page');
+    const explicitBrand = (body.dataset.ultraBrand || document.documentElement.dataset.ultraBrand || '').toLowerCase();
+    const isUltrasoft = explicitBrand === 'ultrasoft' || path.includes('ultrasoft') || title.includes('ultrasoft') || body.classList.contains('ultrasoft-page');
     const brand = isUltrasoft ? 'ULTRASOFT' : 'ULTRACOMP';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -29,10 +30,18 @@
                         <path id="ultraIntroBlade" d="M -38,-38 Q -15,-26 -10,-10 Q -26,-15 -38,-38"/>
                     </defs>
                     <g transform="translate(50, 50)">
-                        <use class="ultra-intro-blade ultra-intro-blade-1" href="#ultraIntroBlade" fill="#0066ff"/>
-                        <use class="ultra-intro-blade ultra-intro-blade-2" href="#ultraIntroBlade" fill="#0066ff" transform="rotate(90)"/>
-                        <use class="ultra-intro-blade ultra-intro-blade-3" href="#ultraIntroBlade" fill="#0066ff" transform="rotate(180)"/>
-                        <use class="ultra-intro-blade ultra-intro-blade-4" href="#ultraIntroBlade" fill="#0066ff" transform="rotate(270)"/>
+                        <g transform="rotate(0)">
+                            <use class="ultra-intro-blade ultra-intro-blade-1" href="#ultraIntroBlade" fill="#0066ff"/>
+                        </g>
+                        <g transform="rotate(90)">
+                            <use class="ultra-intro-blade ultra-intro-blade-2" href="#ultraIntroBlade" fill="#0066ff"/>
+                        </g>
+                        <g transform="rotate(180)">
+                            <use class="ultra-intro-blade ultra-intro-blade-3" href="#ultraIntroBlade" fill="#0066ff"/>
+                        </g>
+                        <g transform="rotate(270)">
+                            <use class="ultra-intro-blade ultra-intro-blade-4" href="#ultraIntroBlade" fill="#0066ff"/>
+                        </g>
                         <circle class="ultra-intro-dot ultra-intro-dot-1" cx="0" cy="-28" r="13" fill="#f5aba6"/>
                         <circle class="ultra-intro-dot ultra-intro-dot-2" cx="0" cy="28" r="13" fill="#badcf5"/>
                         <circle class="ultra-intro-dot ultra-intro-dot-3" cx="-28" cy="0" r="13" fill="#cce8c3"/>
@@ -52,6 +61,8 @@
                     exposure="1.12"
                     shadow-intensity="0.75"
                     interaction-prompt="none"
+                    loading="eager"
+                    reveal="auto"
                     disable-zoom
                     autoplay>
                 </model-viewer>

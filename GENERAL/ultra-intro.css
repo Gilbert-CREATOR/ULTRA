@@ -186,6 +186,15 @@
     opacity: 0;
     filter: drop-shadow(0 28px 34px rgba(15, 23, 42, 0.18));
     transition: opacity 0.28s ease;
+    --progress-bar-color: transparent;
+    --progress-bar-height: 0px;
+}
+
+.ultra-intro-eva-model::part(default-progress-bar),
+.ultra-intro-eva-model::part(progress-bar) {
+    display: none;
+    opacity: 0;
+    height: 0;
 }
 
 .ultra-intro-has-real-eva .ultra-intro-eva-model {
@@ -328,9 +337,9 @@
 }
 
 @keyframes ultraIntroBlade {
-    0% { opacity: 0; transform: scale(0.3) translate(-28px, -28px) rotate(-70deg); }
-    70% { opacity: 1; transform: scale(1.12) translate(0, 0) rotate(8deg); }
-    100% { opacity: 1; transform: scale(1) translate(0, 0) rotate(0); }
+    0% { opacity: 0; transform: scale(0.35) translate(-18px, -18px); }
+    70% { opacity: 1; transform: scale(1.1) translate(0, 0); }
+    100% { opacity: 1; transform: scale(1) translate(0, 0); }
 }
 
 @keyframes ultraIntroDot {
