@@ -28,12 +28,12 @@
 
 .ultra-intro-stage {
     position: relative;
-    width: min(980px, 100%);
+    width: min(1120px, 100%);
     min-height: min(560px, 74vh);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(22px, 5vw, 72px);
+    gap: clamp(22px, 4vw, 58px);
     isolation: isolate;
 }
 
@@ -70,9 +70,10 @@
     align-items: center;
     justify-content: center;
     gap: clamp(14px, 2.2vw, 24px);
-    width: min(720px, 78vw);
+    box-sizing: border-box;
+    width: min(820px, calc(100vw - 320px));
     min-height: clamp(132px, 16vw, 190px);
-    padding: clamp(22px, 4vw, 42px) clamp(26px, 5vw, 58px);
+    padding: clamp(22px, 3vw, 38px) clamp(24px, 4vw, 50px);
     border: 1px solid rgba(18, 61, 187, 0.12);
     border-radius: clamp(30px, 4vw, 48px);
     background:
@@ -97,7 +98,7 @@
 
 .ultra-intro-mark {
     flex: 0 0 auto;
-    width: clamp(82px, 8.8vw, 124px);
+    width: clamp(74px, 7.8vw, 112px);
     height: auto;
     overflow: visible;
 }
@@ -129,7 +130,7 @@
 .ultra-intro-word {
     position: relative;
     overflow: hidden;
-    font-size: clamp(2.6rem, 6.2vw, 5.35rem);
+    font-size: clamp(2.35rem, 5.2vw, 4.45rem);
     font-weight: 950;
     line-height: 0.86;
     letter-spacing: 0.015em;
@@ -156,9 +157,9 @@
 .ultra-intro-eva {
     position: relative;
     flex: 0 0 auto;
-    width: clamp(106px, 13vw, 168px);
-    height: clamp(134px, 17vw, 216px);
-    margin-left: clamp(-42px, -3vw, -20px);
+    width: clamp(142px, 16vw, 214px);
+    height: clamp(188px, 21vw, 282px);
+    margin-left: 0;
     z-index: 3;
     transform-origin: 50% 80%;
     animation: ultraIntroEvaEnter 1.5s cubic-bezier(0.2, 1, 0.2, 1) 0.38s both,
@@ -175,6 +176,33 @@
     background: radial-gradient(ellipse, rgba(17, 24, 39, 0.32), transparent 70%);
     filter: blur(5px);
     animation: ultraIntroShadow 1.45s ease-in-out 1.9s infinite alternate;
+}
+
+.ultra-intro-eva-model {
+    position: absolute;
+    inset: -10% -12% 6%;
+    width: 124%;
+    height: 110%;
+    opacity: 0;
+    filter: drop-shadow(0 28px 34px rgba(15, 23, 42, 0.18));
+    transition: opacity 0.28s ease;
+}
+
+.ultra-intro-has-real-eva .ultra-intro-eva-model {
+    opacity: 1;
+}
+
+.ultra-intro-eva-fallback {
+    position: absolute;
+    inset: 0;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.28s ease;
+}
+
+.ultra-intro-show-fallback:not(.ultra-intro-has-real-eva) .ultra-intro-eva-fallback,
+.ultra-intro-has-fallback-eva .ultra-intro-eva-fallback {
+    opacity: 1;
 }
 
 .ultra-intro-eva-body {
@@ -382,8 +410,8 @@
     .ultra-intro-eva {
         margin-left: 0;
         margin-top: -20px;
-        width: 116px;
-        height: 148px;
+        width: 132px;
+        height: 174px;
     }
 
     .ultra-intro-orbit {
