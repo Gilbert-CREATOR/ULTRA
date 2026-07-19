@@ -28,6 +28,14 @@
                     <defs>
                         <path id="ultraIntroBlade" d="M -38,-38 Q -15,-26 -10,-10 Q -26,-15 -38,-38"/>
                     </defs>
+                    <g class="ultra-intro-morph-dots" transform="translate(50, 50)">
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-1" cx="0" cy="0" r="8"/>
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-2" cx="0" cy="0" r="8"/>
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-3" cx="0" cy="0" r="8"/>
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-4" cx="0" cy="0" r="8"/>
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-5" cx="0" cy="0" r="8"/>
+                        <circle class="ultra-intro-morph-dot ultra-intro-morph-dot-6" cx="0" cy="0" r="8"/>
+                    </g>
                     <g transform="translate(50, 50)">
                         <g transform="rotate(0)">
                             <use class="ultra-intro-blade ultra-intro-blade-1" href="#ultraIntroBlade" fill="#0066ff"/>
@@ -90,8 +98,8 @@
     body.prepend(intro);
 
     const startedAt = Date.now();
-    const minimumDuration = reducedMotion ? 650 : 3600;
-    const maximumDuration = reducedMotion ? 700 : 5600;
+    const minimumDuration = reducedMotion ? 650 : 5200;
+    const maximumDuration = reducedMotion ? 700 : 7200;
     let evaSettled = reducedMotion;
     let finished = false;
 
