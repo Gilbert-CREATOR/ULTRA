@@ -4,7 +4,6 @@
     const body = document.body;
     const explicitBrand = (body.dataset.ultraBrand || document.documentElement.dataset.ultraBrand || '').toLowerCase();
     const isUltrasoft = explicitBrand === 'ultrasoft' || path.includes('ultrasoft') || title.includes('ultrasoft') || body.classList.contains('ultrasoft-page');
-    const brand = isUltrasoft ? 'ULTRASOFT' : 'ULTRACOMP';
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (document.getElementById('ultraIntro')) return;
@@ -25,7 +24,7 @@
         <div class="ultra-intro-stage">
             <div class="ultra-intro-orbit"></div>
             <div class="ultra-intro-logo">
-                <svg class="ultra-intro-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="${brand}">
+                <svg class="ultra-intro-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="ULTRACOMP y ULTRASOFT">
                     <defs>
                         <path id="ultraIntroBlade" d="M -38,-38 Q -15,-26 -10,-10 Q -26,-15 -38,-38"/>
                     </defs>
@@ -48,18 +47,22 @@
                         <circle class="ultra-intro-dot ultra-intro-dot-4" cx="28" cy="0" r="13" fill="#fceda8"/>
                     </g>
                 </svg>
-                <div class="ultra-intro-word"><span>${brand}</span></div>
+                <div class="ultra-intro-word" aria-label="ULTRACOMP y ULTRASOFT">
+                    <span class="ultra-intro-word-item ultra-intro-word-comp">ULTRACOMP</span>
+                    <span class="ultra-intro-word-item ultra-intro-word-soft">ULTRASOFT</span>
+                </div>
             </div>
             <div class="ultra-intro-eva">
                 <span class="ultra-intro-eva-shadow"></span>
                 <model-viewer
                     class="ultra-intro-eva-model"
-                    src="/ULTRACOMP/eva.glb?v=20260719-intro"
+                    src="/ULTRACOMP/eva.glb?v=20260719-eva-real"
                     alt="EVA"
-                    camera-orbit="0deg 74deg 115%"
-                    field-of-view="28deg"
-                    exposure="1.12"
-                    shadow-intensity="0.75"
+                    camera-orbit="0deg 75deg auto"
+                    exposure="1.05"
+                    environment-image="neutral"
+                    shadow-intensity="1.2"
+                    shadow-softness=".8"
                     interaction-prompt="none"
                     loading="eager"
                     reveal="auto"
@@ -87,8 +90,8 @@
     body.prepend(intro);
 
     const startedAt = Date.now();
-    const minimumDuration = reducedMotion ? 650 : 2850;
-    const maximumDuration = reducedMotion ? 700 : 4700;
+    const minimumDuration = reducedMotion ? 650 : 3600;
+    const maximumDuration = reducedMotion ? 700 : 5600;
     let evaSettled = reducedMotion;
     let finished = false;
 
