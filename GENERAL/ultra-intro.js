@@ -22,6 +22,9 @@
 
     intro.innerHTML = `
         <div class="ultra-intro-stage">
+            <span class="ultra-intro-ripple ultra-intro-ripple-one"></span>
+            <span class="ultra-intro-ripple ultra-intro-ripple-two"></span>
+            <span class="ultra-intro-ripple ultra-intro-ripple-three"></span>
             <div class="ultra-intro-orbit"></div>
             <div class="ultra-intro-logo">
                 <svg class="ultra-intro-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="ULTRACOMP y ULTRASOFT">
@@ -98,8 +101,8 @@
     body.prepend(intro);
 
     const startedAt = Date.now();
-    const minimumDuration = reducedMotion ? 650 : 5200;
-    const maximumDuration = reducedMotion ? 700 : 7200;
+    const minimumDuration = reducedMotion ? 650 : 4300;
+    const maximumDuration = reducedMotion ? 700 : 6200;
     let evaSettled = reducedMotion;
     let finished = false;
 

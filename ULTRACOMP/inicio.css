@@ -2093,3 +2093,90 @@
         min-height: 0 !important;
     }
 }
+
+/* Reparación final del hero en móviles: evita columnas heredadas de desktop */
+@media (max-width: 640px) {
+    .ultracomp-home .hero.home-hero,
+    .ultracomp-home .home-hero {
+        min-height: 0 !important;
+        padding: 44px 0 38px !important;
+        overflow: hidden !important;
+    }
+
+    .ultracomp-home .home-hero > .container {
+        display: grid !important;
+        width: min(100% - 32px, 560px) !important;
+        max-width: none !important;
+        grid-template-columns: 1fr !important;
+        gap: 22px !important;
+        align-items: start !important;
+        padding: 0 !important;
+    }
+
+    .ultracomp-home .home-hero .home-hero-copy {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        grid-column: 1 / -1 !important;
+    }
+
+    .ultracomp-home .home-hero h1 {
+        display: block !important;
+        max-width: 10.5ch !important;
+        margin: 0 0 18px !important;
+        font-size: clamp(56px, 15vw, 76px) !important;
+        line-height: .9 !important;
+        letter-spacing: -.075em !important;
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .ultracomp-home .home-hero p {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 24px !important;
+        font-size: 17px !important;
+        line-height: 1.45 !important;
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
+
+    .ultracomp-home .hero-cta {
+        display: grid !important;
+        width: 100% !important;
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .ultracomp-home .hero-cta a {
+        width: 100% !important;
+        min-height: 58px !important;
+        border-radius: 16px !important;
+        font-size: 16px !important;
+    }
+
+    .ultracomp-home .hero-stats {
+        display: grid !important;
+        width: 100% !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        margin-top: 32px !important;
+        padding-top: 22px !important;
+    }
+
+    .ultracomp-home .hero-stat {
+        min-width: 0 !important;
+        padding: 0 8px !important;
+    }
+
+    .ultracomp-home .hero-stat:first-child {
+        padding-left: 0 !important;
+    }
+
+    .ultracomp-home .home-hero .home-hero-floating-logo,
+    .ultracomp-home .home-hero button.home-hero-floating-logo {
+        display: none !important;
+    }
+}
