@@ -379,9 +379,16 @@ function getDefaultContent() {
 async function getSiteContent() {
     if (!dbReady) return memoryStore.content || getDefaultContent();
 
+    await ensureContentStorage();
     const [rows] = await mysqlPool.query('SELECT data FROM web_content WHERE content_key = ? LIMIT 1', ['site']);
     if (!rows.length) return memoryStore.content || getDefaultContent();
-    const stored = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
+    let stored = {};
+    try {
+        stored = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
+    } catch (error) {
+        console.warn('Contenido web inválido en MySQL. Se usará contenido por defecto:', error.message);
+        stored = {};
+    }
     return {
         ...getDefaultContent(),
         ...stored,
@@ -422,6 +429,7 @@ async function saveSiteContent(content) {
         return memoryStore.content;
     }
 
+    await ensureContentStorage();
     const current = await getSiteContent();
     const merged = mergeContent(current, content);
 
@@ -432,6 +440,15 @@ async function saveSiteContent(content) {
     );
     memoryStore.content = merged;
     return merged;
+}
+
+async function ensureContentStorage() {
+    if (!mysqlPool) return;
+    await mysqlPool.query(`CREATE TABLE IF NOT EXISTS web_content (
+        content_key VARCHAR(100) PRIMARY KEY,
+        data LONGTEXT NOT NULL,
+        updated_at DATETIME NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
 }
 
 function mergeContent(currentContent, content) {
@@ -507,7 +524,7 @@ function securityHeaders() {
         'X-Frame-Options': 'SAMEORIGIN',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-        'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'self'"
+        'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data: https://images.simplycodes.com; frame-ancestors 'self'"
     };
     if (process.env.NODE_ENV === 'production') {
         headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
@@ -982,20 +999,30 @@ async function handleApi(req, res, url) {
     if (url.pathname === '/api/admin/license' && req.method === 'PUT') {
         if (!isAdmin(req)) { sendJson(res, 401, { message: 'No autorizado' }); return true; }
         if (!isOwner(req)) { sendJson(res, 403, { message: 'Solo el owner puede cambiar el estado de licencia.' }); return true; }
-        const body = await readBody(req);
-        const status = ['active', 'maintenance', 'suspended'].includes(body.status) ? body.status : 'active';
-        const nextSettings = {
-            ...(memoryStore.content?.settings || {}),
-            siteStatus: status,
-            siteStatusTitle: String(body.title || '').trim().slice(0, 160),
-            siteStatusMessage: String(body.message || '').trim().slice(0, 600)
-        };
-        const content = await saveSiteContent({ settings: nextSettings });
-        await recordAudit('license_status_update', 'web_content', 'site', {
-            status,
-            by: currentAdmin(req).userId || 'owner'
-        });
-        sendJson(res, 200, { ok: true, settings: content.settings, license: getSiteAccessSettings() });
+        try {
+            const body = await readBody(req);
+            const status = ['active', 'maintenance', 'suspended'].includes(body.status) ? body.status : 'active';
+            const currentContent = await getSiteContent();
+            const nextSettings = {
+                ...(currentContent.settings || {}),
+                siteStatus: status,
+                siteStatusTitle: String(body.title || '').trim().slice(0, 160),
+                siteStatusMessage: String(body.message || '').trim().slice(0, 600)
+            };
+            const content = await saveSiteContent({ settings: nextSettings });
+            try {
+                await recordAudit('license_status_update', 'web_content', 'site', {
+                    status,
+                    by: currentAdmin(req).userId || 'owner'
+                });
+            } catch (auditError) {
+                console.warn('No se pudo registrar auditoría de licencia:', auditError.message);
+            }
+            sendJson(res, 200, { ok: true, settings: content.settings, license: getSiteAccessSettings() });
+        } catch (error) {
+            console.error('Error actualizando estado del sitio:', error);
+            sendJson(res, 500, { message: 'No se pudo guardar el estado del sitio. Revisa la conexión MySQL en Render.' });
+        }
         return true;
     }
 
