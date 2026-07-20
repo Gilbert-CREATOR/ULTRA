@@ -75,27 +75,43 @@
     width: min(820px, calc(100vw - 320px));
     min-height: clamp(132px, 16vw, 190px);
     padding: clamp(22px, 3vw, 38px) clamp(24px, 4vw, 50px);
-    border: 1px solid rgba(18, 61, 187, 0.12);
+    border: 0;
     border-radius: clamp(30px, 4vw, 48px);
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 246, 255, 0.7)),
-        radial-gradient(circle at 18% 30%, rgba(186, 220, 245, 0.28), transparent 35%);
-    box-shadow:
-        0 36px 95px rgba(18, 61, 187, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    background: transparent;
+    box-shadow: none;
     z-index: 2;
     filter: drop-shadow(0 26px 42px rgba(0, 64, 190, 0.18));
     transform-origin: center;
-    animation: ultraIntroLogoLand 3.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: ultraIntroLogoLand 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .ultra-intro-logo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(18, 61, 187, 0.12);
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(238, 246, 255, 0.72)),
+        radial-gradient(circle at 18% 30%, rgba(186, 220, 245, 0.3), transparent 35%);
+    box-shadow:
+        0 36px 95px rgba(18, 61, 187, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    pointer-events: none;
+    transform-origin: center;
+    animation: ultraIntroCapsuleOpen 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    z-index: -1;
+}
+
+.ultra-intro-logo::after {
     content: "";
     position: absolute;
     inset: 14px;
     border-radius: inherit;
     border: 1px solid rgba(255, 255, 255, 0.72);
     pointer-events: none;
+    transform-origin: center;
+    animation: ultraIntroInnerLineOpen 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .ultra-intro-mark {
@@ -159,6 +175,8 @@
     color: #123dbb;
     text-transform: uppercase;
     white-space: nowrap;
+    opacity: 0;
+    animation: ultraIntroWordContainer 3.8s ease both;
 }
 
 .ultra-intro-word::after {
@@ -194,8 +212,8 @@
     margin-left: 0;
     z-index: 3;
     transform-origin: 50% 80%;
-    animation: ultraIntroEvaEnter 1.45s cubic-bezier(0.2, 1, 0.2, 1) 2.0s both,
-               ultraIntroEvaFloat 1.45s ease-in-out 3.35s infinite alternate;
+    animation: ultraIntroEvaEnter 1.45s cubic-bezier(0.2, 1, 0.2, 1) 2.55s both,
+               ultraIntroEvaFloat 1.45s ease-in-out 3.9s infinite alternate;
 }
 
 .ultra-intro-eva-shadow {
@@ -207,7 +225,7 @@
     border-radius: 999px;
     background: radial-gradient(ellipse, rgba(17, 24, 39, 0.32), transparent 70%);
     filter: blur(5px);
-    animation: ultraIntroShadow 1.45s ease-in-out 3.35s infinite alternate;
+    animation: ultraIntroShadow 1.45s ease-in-out 3.9s infinite alternate;
 }
 
 .ultra-intro-eva-model {
@@ -331,7 +349,7 @@
     background: #22c3f3;
     box-shadow: 0 0 0 8px rgba(34, 195, 243, 0.13), 0 0 24px rgba(34, 195, 243, 0.55);
     opacity: 0;
-    animation: ultraIntroSpark 0.7s ease 2.2s both;
+    animation: ultraIntroSpark 0.7s ease 2.65s both;
 }
 
 .ultra-intro-progress {
@@ -366,15 +384,15 @@
 @keyframes ultraIntroLogoLand {
     0% {
         opacity: 0;
-        transform: scaleX(0.32) scaleY(0.82) translateY(24px);
+        transform: translateY(28px) scale(0.76);
     }
     28% {
         opacity: 1;
-        transform: scaleX(0.36) scaleY(1) translateY(0);
+        transform: translateY(0) scale(0.86);
     }
     66% {
         opacity: 1;
-        transform: scaleX(1.035) scaleY(1) translateY(0);
+        transform: translateY(0) scale(1.025);
     }
     100% {
         opacity: 1;
@@ -382,17 +400,57 @@
     }
 }
 
+@keyframes ultraIntroCapsuleOpen {
+    0%,
+    36% {
+        opacity: 0;
+        transform: scaleX(0.2) scaleY(0.68);
+        filter: blur(10px);
+    }
+    48% {
+        opacity: 1;
+        transform: scaleX(0.28) scaleY(0.78);
+        filter: blur(0);
+    }
+    72%,
+    100% {
+        opacity: 1;
+        transform: scaleX(1) scaleY(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes ultraIntroInnerLineOpen {
+    0%,
+    48% {
+        opacity: 0;
+        transform: scaleX(0.22);
+    }
+    72%,
+    100% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
 @keyframes ultraIntroMarkMove {
     0%,
-    42% {
-        transform: translateX(var(--intro-mark-shift)) scale(1.38) rotate(-8deg);
+    46% {
+        transform: translateX(var(--intro-mark-shift)) scale(1.62) rotate(-8deg);
     }
-    68% {
+    74% {
         transform: translateX(-6px) scale(1.04) rotate(2deg);
     }
     100% {
         transform: translateX(0) scale(1) rotate(0deg);
     }
+}
+
+@keyframes ultraIntroWordContainer {
+    0%,
+    54% { opacity: 0; }
+    66%,
+    100% { opacity: 1; }
 }
 
 @keyframes ultraIntroMorphDot {
