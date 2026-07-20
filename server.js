@@ -51,6 +51,25 @@ const contactAttempts = new Map();
 const loginAttempts = new Map();
 let mailTransporter = null;
 
+function ensureUploadDir() {
+    if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+    }
+}
+
+async function resetMysqlPool() {
+    const pool = mysqlPool;
+    mysqlPool = null;
+    dbReady = false;
+    productDbReady = false;
+    if (!pool) return;
+    try {
+        await pool.end();
+    } catch (error) {
+        console.warn('No se pudo cerrar el pool MySQL después del fallo:', error.message);
+    }
+}
+
 // dbReady queda apagado para que el contenido, login y cotizaciones sigan usando fallback local.
 // Los productos ahora leen directamente desde MySQL: dbenterpriseultrasoft.articulo_servicio.
 let dbReady = false;
@@ -1410,14 +1429,20 @@ async function handleApi(req, res, url) {
 
     if (url.pathname === '/api/admin/media' && req.method === 'GET') {
         if (!isAdmin(req)) { sendJson(res, 401, { message: 'No autorizado' }); return true; }
-        const files = fs.readdirSync(UPLOAD_DIR, { withFileTypes: true })
-            .filter(entry => entry.isFile() && /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(entry.name))
-            .map(entry => {
-                const stat = fs.statSync(path.join(UPLOAD_DIR, entry.name));
-                return { name: entry.name, url: `/IMAGENES/${encodeURIComponent(entry.name)}`, size: stat.size, updatedAt: stat.mtime };
-            })
-            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        sendJson(res, 200, { files });
+        try {
+            ensureUploadDir();
+            const files = fs.readdirSync(UPLOAD_DIR, { withFileTypes: true })
+                .filter(entry => entry.isFile() && /\.(png|jpe?g|webp|gif|svg|avif)$/i.test(entry.name))
+                .map(entry => {
+                    const stat = fs.statSync(path.join(UPLOAD_DIR, entry.name));
+                    return { name: entry.name, url: `/IMAGENES/${encodeURIComponent(entry.name)}`, size: stat.size, updatedAt: stat.mtime };
+                })
+                .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            sendJson(res, 200, { files });
+        } catch (error) {
+            console.error('Error leyendo carpeta de imágenes:', error);
+            sendJson(res, 500, { message: 'No se pudo preparar la carpeta de imágenes. Revisa UPLOAD_DIR en el servidor.' });
+        }
         return true;
     }
 
@@ -1429,6 +1454,7 @@ async function handleApi(req, res, url) {
             const extension = path.extname(upload.filename || '').toLowerCase() || '.jpg';
             const base = safeMediaFilename(path.basename(upload.filename || 'imagen', extension)) || 'imagen';
             const filename = `${Date.now()}-${base}${extension}`;
+            ensureUploadDir();
             fs.writeFileSync(path.join(UPLOAD_DIR, filename), upload.buffer);
             await recordAudit('media_upload', 'media', filename, { size: upload.buffer.length });
             sendJson(res, 201, { ok: true, file: { name: filename, url: `/IMAGENES/${encodeURIComponent(filename)}` } });
@@ -2010,7 +2036,7 @@ async function handleApi(req, res, url) {
 
 async function ensureUltraTables() {
     if (!mysqlPool) return;
-    if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+    ensureUploadDir();
     await mysqlPool.query(`CREATE TABLE IF NOT EXISTS producto_imagenes (
         id INT AUTO_INCREMENT PRIMARY KEY,
         codigo_articulo INT NOT NULL,
@@ -2383,7 +2409,7 @@ async function saveUploadedImage(productId, upload) {
     const row = rows[0] || {};
     const code = row.articulo_codigo || productId;
     const file = `producto-${slugPart(code)}-${slugPart(row.nombre || productId)}-${Date.now()}${upload.ext}`;
-    if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+    ensureUploadDir();
     fs.writeFileSync(path.join(UPLOAD_DIR, file), upload.buffer);
     return { filename: file, publicPath: `/IMAGENES/${file}` };
 }
@@ -3753,8 +3779,9 @@ let initPromise = null;
 
 async function prepareApp() {
     if (!initPromise) {
-        initPromise = initDatabase().catch(error => {
+        initPromise = initDatabase().catch(async error => {
             console.error('Could not initialize database. Using memory fallback:', error.message);
+            await resetMysqlPool();
         });
     }
     return initPromise;
