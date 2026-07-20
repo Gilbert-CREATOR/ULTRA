@@ -11,10 +11,9 @@
     place-items: center;
     padding: 24px;
     background:
-        radial-gradient(circle at 50% 38%, rgba(18, 61, 187, 0.16), transparent 34%),
-        radial-gradient(circle at 18% 74%, rgba(28, 168, 236, 0.13), transparent 30%),
-        linear-gradient(145deg, #f8fbff 0%, #eef5ff 50%, #ffffff 100%);
-    color: #111827;
+        radial-gradient(circle at 50% 50%, rgba(18, 61, 187, 0.15), transparent 34%),
+        radial-gradient(circle at 25% 78%, rgba(28, 168, 236, 0.15), transparent 31%),
+        linear-gradient(145deg, #f9fcff 0%, #eef6ff 52%, #ffffff 100%);
     pointer-events: all;
     opacity: 1;
     transition: opacity 0.45s ease, visibility 0.45s ease;
@@ -28,340 +27,181 @@
 
 .ultra-intro-stage {
     position: relative;
-    width: min(1120px, 100%);
-    min-height: min(560px, 74vh);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: clamp(22px, 4vw, 58px);
+    width: min(980px, 94vw);
+    min-height: min(460px, 70vh);
+    display: grid;
+    place-items: center;
     isolation: isolate;
+    --intro-open-width: min(680px, 86vw);
+    --intro-closed-size: clamp(88px, 10vw, 118px);
+    --intro-logo-size: clamp(68px, 7.8vw, 94px);
 }
 
-.ultra-intro-orbit {
+.ultra-intro-ripple {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: min(410px, 58vw);
+    width: clamp(220px, 36vw, 430px);
     aspect-ratio: 1;
     border-radius: 50%;
-    border: 1px solid rgba(0, 102, 255, 0.14);
-    box-shadow: 0 0 72px rgba(0, 102, 255, 0.1);
-    translate: -50% -50%;
-    animation: ultraIntroOrbit 2.1s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+    border: 1px solid rgba(18, 61, 187, 0.11);
+    box-shadow: 0 0 80px rgba(18, 61, 187, 0.09);
+    opacity: 0;
+    animation: ultraIntroRipple 3.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+    z-index: 0;
 }
 
-.ultra-intro-orbit::before,
-.ultra-intro-orbit::after {
-    content: "";
-    position: absolute;
-    inset: 7%;
-    border-radius: inherit;
-    border: 1px solid rgba(0, 102, 255, 0.12);
-    transform: rotate(32deg) scaleX(1.14);
+.ultra-intro-ripple-two {
+    width: clamp(270px, 43vw, 520px);
+    animation-delay: 0.18s;
 }
 
-.ultra-intro-orbit::after {
-    transform: rotate(-34deg) scaleX(1.1);
+.ultra-intro-ripple-three {
+    width: clamp(150px, 24vw, 300px);
+    animation-delay: 0.34s;
 }
 
-.ultra-intro-logo {
+.ultra-intro-badge {
     position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: clamp(14px, 2.2vw, 24px);
-    --intro-mark-shift: clamp(142px, 24vw, 284px);
-    box-sizing: border-box;
-    width: min(820px, calc(100vw - 320px));
-    min-height: clamp(132px, 16vw, 190px);
-    padding: clamp(22px, 3vw, 38px) clamp(24px, 4vw, 50px);
-    border: 0;
-    border-radius: clamp(30px, 4vw, 48px);
-    background: transparent;
-    box-shadow: none;
-    z-index: 2;
-    filter: drop-shadow(0 26px 42px rgba(0, 64, 190, 0.18));
+    justify-content: flex-start;
+    width: var(--intro-open-width);
+    min-height: var(--intro-closed-size);
+    padding: clamp(10px, 1.8vw, 14px);
+    border: 1px solid rgba(18, 61, 187, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(238, 247, 255, 0.82)),
+        radial-gradient(circle at 18% 50%, rgba(186, 220, 245, 0.3), transparent 40%);
+    box-shadow:
+        0 34px 90px rgba(18, 61, 187, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86);
     transform-origin: center;
-    animation: ultraIntroLogoLand 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    will-change: width, transform, opacity;
+    animation: ultraIntroBadge 3.95s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.ultra-intro-logo::before {
+.ultra-intro-badge::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    pointer-events: none;
+}
+
+.ultra-intro-badge::after {
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    border: 1px solid rgba(18, 61, 187, 0.12);
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(238, 246, 255, 0.72)),
-        radial-gradient(circle at 18% 30%, rgba(186, 220, 245, 0.3), transparent 35%);
-    box-shadow:
-        0 36px 95px rgba(18, 61, 187, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    background: linear-gradient(105deg, transparent 18%, rgba(255, 255, 255, 0.84) 47%, transparent 73%);
+    transform: translateX(-115%);
+    animation: ultraIntroSheen 1s ease 1.75s both;
     pointer-events: none;
-    transform-origin: center;
-    animation: ultraIntroCapsuleOpen 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-    z-index: -1;
 }
 
-.ultra-intro-logo::after {
-    content: "";
-    position: absolute;
-    inset: 14px;
-    border-radius: inherit;
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    pointer-events: none;
-    transform-origin: center;
-    animation: ultraIntroInnerLineOpen 3.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+.ultra-intro-round {
+    position: relative;
+    z-index: 3;
+    flex: 0 0 auto;
+    width: var(--intro-logo-size);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow:
+        0 18px 38px rgba(18, 61, 187, 0.14),
+        inset 0 0 0 1px rgba(18, 61, 187, 0.08);
+    animation: ultraIntroRoundSlide 3.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .ultra-intro-mark {
-    flex: 0 0 auto;
-    width: clamp(74px, 7.8vw, 112px);
-    height: auto;
+    width: 72%;
+    height: 72%;
     overflow: visible;
     transform-origin: center;
-    animation: ultraIntroMarkMove 3.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: ultraIntroMarkSpin 2.95s cubic-bezier(0.18, 1, 0.2, 1) both;
 }
 
-.ultra-intro-morph-dot {
-    transform-box: fill-box;
-    transform-origin: center;
-    opacity: 0;
-    fill: #123dbb;
-    filter: drop-shadow(0 6px 12px rgba(18, 61, 187, 0.18));
-    animation: ultraIntroMorphDot 1.25s cubic-bezier(0.18, 1, 0.22, 1) both;
-}
-
-.ultra-intro-morph-dot-1 { --x1: -18px; --y1: -6px; --x2: 0px; --y2: -28px; fill: #f5aba6; animation-delay: 0.04s; }
-.ultra-intro-morph-dot-2 { --x1: 18px; --y1: 4px; --x2: 28px; --y2: 0px; fill: #fceda8; animation-delay: 0.1s; }
-.ultra-intro-morph-dot-3 { --x1: -6px; --y1: 18px; --x2: 0px; --y2: 28px; fill: #badcf5; animation-delay: 0.16s; }
-.ultra-intro-morph-dot-4 { --x1: 2px; --y1: -22px; --x2: -28px; --y2: 0px; fill: #cce8c3; animation-delay: 0.22s; }
-.ultra-intro-morph-dot-5 { --x1: -26px; --y1: 22px; --x2: -15px; --y2: -15px; fill: #0066ff; animation-delay: 0.28s; }
-.ultra-intro-morph-dot-6 { --x1: 26px; --y1: -22px; --x2: 15px; --y2: 15px; fill: #0066ff; animation-delay: 0.34s; }
-
-.ultra-intro-blade {
-    transform-box: fill-box;
-    transform-origin: center;
-    opacity: 0;
-    animation: ultraIntroBlade 1.05s cubic-bezier(0.18, 0.9, 0.2, 1.22) forwards;
-}
-
-.ultra-intro-blade-1 { animation-delay: 1.02s; }
-.ultra-intro-blade-2 { animation-delay: 1.08s; }
-.ultra-intro-blade-3 { animation-delay: 1.14s; }
-.ultra-intro-blade-4 { animation-delay: 1.2s; }
-
+.ultra-intro-blade,
 .ultra-intro-dot {
     transform-box: fill-box;
     transform-origin: center;
     opacity: 0;
-    animation: ultraIntroDot 0.62s cubic-bezier(0.18, 1.25, 0.25, 1) forwards;
 }
 
-.ultra-intro-dot-1 { animation-delay: 1.22s; }
-.ultra-intro-dot-2 { animation-delay: 1.28s; }
-.ultra-intro-dot-3 { animation-delay: 1.34s; }
-.ultra-intro-dot-4 { animation-delay: 1.4s; }
+.ultra-intro-blade {
+    animation: ultraIntroBladePop 0.72s cubic-bezier(0.18, 1.15, 0.25, 1) forwards;
+}
+
+.ultra-intro-blade-1 { animation-delay: 0.34s; }
+.ultra-intro-blade-2 { animation-delay: 0.4s; }
+.ultra-intro-blade-3 { animation-delay: 0.46s; }
+.ultra-intro-blade-4 { animation-delay: 0.52s; }
+
+.ultra-intro-dot {
+    animation: ultraIntroDotPop 0.58s cubic-bezier(0.18, 1.25, 0.25, 1) forwards;
+}
+
+.ultra-intro-dot-1 { animation-delay: 0.66s; }
+.ultra-intro-dot-2 { animation-delay: 0.72s; }
+.ultra-intro-dot-3 { animation-delay: 0.78s; }
+.ultra-intro-dot-4 { animation-delay: 0.84s; }
+
+.ultra-intro-name-mask {
+    position: relative;
+    z-index: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 clamp(18px, 3vw, 34px);
+    opacity: 0;
+    transform: translateX(-18px);
+    animation: ultraIntroNameReveal 3.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
 .ultra-intro-word {
     position: relative;
+    width: 100%;
+    height: 0.92em;
     overflow: hidden;
-    width: min(520px, 48vw);
-    height: 0.94em;
-    font-size: clamp(2.35rem, 5.2vw, 4.45rem);
-    font-weight: 950;
-    line-height: 0.86;
-    letter-spacing: 0.015em;
     color: #123dbb;
+    font-size: clamp(2.45rem, 6vw, 4.7rem);
+    font-weight: 950;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     white-space: nowrap;
-    opacity: 0;
-    animation: ultraIntroWordContainer 3.8s ease both;
-}
-
-.ultra-intro-word::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.76), transparent);
-    transform: translateX(-120%);
-    animation: ultraIntroShine 1.05s ease 2.08s both;
 }
 
 .ultra-intro-word-item {
+    position: absolute;
+    inset: 0;
     display: block;
     will-change: transform, opacity, filter;
 }
 
 .ultra-intro-word-comp {
-    animation: ultraIntroWordComp 4s cubic-bezier(0.2, 0.95, 0.2, 1) 1.35s both;
+    animation: ultraIntroWordComp 3.95s cubic-bezier(0.2, 0.95, 0.2, 1) 0.75s both;
 }
 
 .ultra-intro-word-soft {
-    position: absolute;
-    inset: 0;
-    color: #123dbb;
-    animation: ultraIntroWordSoft 4s cubic-bezier(0.2, 0.95, 0.2, 1) 1.35s both;
-}
-
-.ultra-intro-eva {
-    position: relative;
-    flex: 0 0 auto;
-    width: clamp(164px, 17vw, 238px);
-    height: clamp(210px, 23vw, 318px);
-    margin-left: 0;
-    z-index: 3;
-    transform-origin: 50% 80%;
-    animation: ultraIntroEvaEnter 1.45s cubic-bezier(0.2, 1, 0.2, 1) 2.55s both,
-               ultraIntroEvaFloat 1.45s ease-in-out 3.9s infinite alternate;
-}
-
-.ultra-intro-eva-shadow {
-    position: absolute;
-    left: 15%;
-    right: 15%;
-    bottom: 0;
-    height: 12%;
-    border-radius: 999px;
-    background: radial-gradient(ellipse, rgba(17, 24, 39, 0.32), transparent 70%);
-    filter: blur(5px);
-    animation: ultraIntroShadow 1.45s ease-in-out 3.9s infinite alternate;
-}
-
-.ultra-intro-eva-model {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    filter: drop-shadow(0 28px 34px rgba(15, 23, 42, 0.18));
-    transition: opacity 0.28s ease;
-    --poster-color: transparent;
-    --progress-bar-color: transparent;
-    --progress-bar-height: 0px;
-}
-
-.ultra-intro-eva-model::part(default-progress-bar),
-.ultra-intro-eva-model::part(progress-bar) {
-    display: none;
-    opacity: 0;
-    height: 0;
-}
-
-.ultra-intro-has-real-eva .ultra-intro-eva-model {
-    opacity: 1;
-}
-
-.ultra-intro-eva-fallback {
-    position: absolute;
-    inset: 0;
-    display: block;
-    opacity: 0;
-    transition: opacity 0.28s ease;
-}
-
-.ultra-intro-show-fallback:not(.ultra-intro-has-real-eva) .ultra-intro-eva-fallback,
-.ultra-intro-has-fallback-eva .ultra-intro-eva-fallback {
-    opacity: 1;
-}
-
-.ultra-intro-eva-body {
-    position: absolute;
-    left: 25%;
-    right: 25%;
-    bottom: 12%;
-    height: 48%;
-    border-radius: 50% 50% 46% 46% / 38% 38% 64% 64%;
-    background: linear-gradient(145deg, #ffffff 10%, #eef2f8 58%, #dfe7f2 100%);
-    box-shadow: inset -16px -22px 28px rgba(171, 184, 204, 0.28);
-}
-
-.ultra-intro-eva-head {
-    position: absolute;
-    left: 18%;
-    right: 18%;
-    top: 1%;
-    height: 36%;
-    border-radius: 50% 50% 42% 42%;
-    background: linear-gradient(145deg, #ffffff 0%, #f5f7fb 66%, #dfe7f2 100%);
-    box-shadow: 0 14px 28px rgba(17, 24, 39, 0.12);
-}
-
-.ultra-intro-eva-face {
-    position: absolute;
-    left: 18%;
-    right: 18%;
-    top: 31%;
-    height: 40%;
-    border-radius: 50% 50% 46% 46%;
-    background: radial-gradient(circle at 50% 18%, #202938, #090d13 72%);
-}
-
-.ultra-intro-eva-eye {
-    position: absolute;
-    top: 48%;
-    width: 27%;
-    height: 16%;
-    border-radius: 100% 20% 100% 20%;
-    background: linear-gradient(90deg, #4fe3ff, #169bd5);
-    filter: drop-shadow(0 0 6px rgba(79, 227, 255, 0.7));
-}
-
-.ultra-intro-eva-eye:first-child {
-    left: 20%;
-    transform: rotate(12deg);
-}
-
-.ultra-intro-eva-eye:last-child {
-    right: 20%;
-    transform: rotate(-12deg) scaleX(-1);
-}
-
-.ultra-intro-eva-arm {
-    position: absolute;
-    top: 38%;
-    width: 16%;
-    height: 42%;
-    border-radius: 999px;
-    background: linear-gradient(160deg, #ffffff, #e3ebf6);
-    box-shadow: inset -8px -10px 16px rgba(171, 184, 204, 0.2);
-}
-
-.ultra-intro-eva-arm.left {
-    left: 9%;
-    transform: rotate(14deg);
-    animation: ultraIntroWaveLeft 0.7s ease-in-out 1.02s 2;
-}
-
-.ultra-intro-eva-arm.right {
-    right: 9%;
-    transform: rotate(-32deg);
-    animation: ultraIntroWaveRight 0.7s ease-in-out 1.02s 2;
-}
-
-.ultra-intro-spark {
-    position: absolute;
-    left: -18%;
-    top: 22%;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #22c3f3;
-    box-shadow: 0 0 0 8px rgba(34, 195, 243, 0.13), 0 0 24px rgba(34, 195, 243, 0.55);
-    opacity: 0;
-    animation: ultraIntroSpark 0.7s ease 2.65s both;
+    animation: ultraIntroWordSoft 3.95s cubic-bezier(0.2, 0.95, 0.2, 1) 0.75s both;
 }
 
 .ultra-intro-progress {
     position: absolute;
     bottom: 8%;
     left: 50%;
-    width: min(330px, 56vw);
+    width: min(320px, 58vw);
     height: 4px;
     transform: translateX(-50%);
     overflow: hidden;
     border-radius: 999px;
     background: rgba(18, 61, 187, 0.1);
+    z-index: 3;
 }
 
 .ultra-intro-progress span {
@@ -372,185 +212,158 @@
     transform: scaleX(0);
     border-radius: inherit;
     background: linear-gradient(90deg, #1ca8ec, #123dbb);
-    animation: ultraIntroProgress 4.9s ease-out forwards;
+    animation: ultraIntroProgress 4.05s ease-out forwards;
 }
 
-@keyframes ultraIntroOrbit {
-    0% { opacity: 0; transform: scale(0.72) rotate(-80deg); }
-    45% { opacity: 1; }
-    100% { opacity: 1; transform: scale(1) rotate(360deg); }
-}
-
-@keyframes ultraIntroLogoLand {
+@keyframes ultraIntroRipple {
     0% {
         opacity: 0;
-        transform: translateY(28px) scale(0.76);
+        transform: scale(0.45) rotate(-38deg);
     }
-    28% {
+    30% {
         opacity: 1;
-        transform: translateY(0) scale(0.86);
-    }
-    66% {
-        opacity: 1;
-        transform: translateY(0) scale(1.025);
     }
     100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
+        opacity: 0.55;
+        transform: scale(1) rotate(42deg);
     }
 }
 
-@keyframes ultraIntroCapsuleOpen {
-    0%,
-    36% {
+@keyframes ultraIntroBadge {
+    0% {
         opacity: 0;
-        transform: scaleX(0.2) scaleY(0.68);
-        filter: blur(10px);
+        width: var(--intro-closed-size);
+        transform: translateY(18px) scale(0.9);
     }
-    48% {
+    20% {
         opacity: 1;
-        transform: scaleX(0.28) scaleY(0.78);
-        filter: blur(0);
+        width: var(--intro-closed-size);
+        transform: translateY(0) scale(1);
     }
-    72%,
+    52% {
+        width: var(--intro-open-width);
+        transform: translateY(0) scale(1.015);
+    }
     100% {
         opacity: 1;
-        transform: scaleX(1) scaleY(1);
-        filter: blur(0);
+        width: var(--intro-open-width);
+        transform: translateY(0) scale(1);
     }
 }
 
-@keyframes ultraIntroInnerLineOpen {
+@keyframes ultraIntroRoundSlide {
     0%,
-    48% {
+    18% {
+        transform: translateX(0) scale(1.08) rotate(0deg);
+    }
+    52% {
+        transform: translateX(0) scale(1) rotate(360deg);
+    }
+    100% {
+        transform: translateX(0) scale(1) rotate(360deg);
+    }
+}
+
+@keyframes ultraIntroMarkSpin {
+    0% {
         opacity: 0;
-        transform: scaleX(0.22);
+        transform: rotate(-120deg) scale(0.34);
     }
-    72%,
+    38% {
+        opacity: 1;
+        transform: rotate(18deg) scale(1.1);
+    }
+    62% {
+        opacity: 1;
+        transform: rotate(360deg) scale(1);
+    }
     100% {
         opacity: 1;
-        transform: scaleX(1);
+        transform: rotate(360deg) scale(1);
     }
 }
 
-@keyframes ultraIntroMarkMove {
-    0%,
-    46% {
-        transform: translateX(var(--intro-mark-shift)) scale(1.62) rotate(-8deg);
+@keyframes ultraIntroBladePop {
+    0% {
+        opacity: 0;
+        transform: translate(-12px, -12px) scale(0.18);
     }
     74% {
-        transform: translateX(-6px) scale(1.04) rotate(2deg);
+        opacity: 1;
+        transform: translate(0, 0) scale(1.12);
     }
     100% {
-        transform: translateX(0) scale(1) rotate(0deg);
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
     }
 }
 
-@keyframes ultraIntroWordContainer {
-    0%,
-    54% { opacity: 0; }
-    66%,
-    100% { opacity: 1; }
-}
-
-@keyframes ultraIntroMorphDot {
+@keyframes ultraIntroDotPop {
     0% {
         opacity: 0;
-        transform: translate(var(--x1), var(--y1)) scale(0.22);
+        transform: scale(0);
     }
-    24% {
+    72% {
         opacity: 1;
-        transform: translate(var(--x1), var(--y1)) scale(1);
-    }
-    68% {
-        opacity: 1;
-        transform: translate(var(--x2), var(--y2)) scale(1.08);
+        transform: scale(1.2);
     }
     100% {
-        opacity: 0;
-        transform: translate(var(--x2), var(--y2)) scale(0.12);
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
-@keyframes ultraIntroBlade {
-    0% { opacity: 0; transform: scale(0.35) translate(-18px, -18px); }
-    70% { opacity: 1; transform: scale(1.1) translate(0, 0); }
-    100% { opacity: 1; transform: scale(1) translate(0, 0); }
-}
-
-@keyframes ultraIntroDot {
-    0% { opacity: 0; transform: scale(0) translateY(18px); }
-    72% { opacity: 1; transform: scale(1.18) translateY(0); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+@keyframes ultraIntroNameReveal {
+    0%,
+    32% {
+        opacity: 0;
+        transform: translateX(-18px);
+    }
+    48%,
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes ultraIntroWordComp {
-    0% {
+    0%,
+    16% {
         opacity: 0;
-        transform: translateY(112%) scale(0.98);
-        filter: blur(8px);
+        transform: translateX(-18%) translateY(0);
+        filter: blur(7px);
     }
-    18%,
-    47% {
+    30%,
+    52% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateX(0) translateY(0);
         filter: blur(0);
     }
-    66%,
+    70%,
     100% {
         opacity: 0;
-        transform: translateY(-116%) scale(0.98);
-        filter: blur(8px);
+        transform: translateY(-110%);
+        filter: blur(7px);
     }
 }
 
 @keyframes ultraIntroWordSoft {
     0%,
-    46% {
+    54% {
         opacity: 0;
-        transform: translateY(116%) scale(0.98);
-        filter: blur(8px);
+        transform: translateY(110%);
+        filter: blur(7px);
     }
-    66%,
+    72%,
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
         filter: blur(0);
     }
 }
 
-@keyframes ultraIntroShine {
-    to { transform: translateX(120%); }
-}
-
-@keyframes ultraIntroEvaEnter {
-    0% { opacity: 0; transform: translate(70px, 32px) rotate(8deg) scale(0.78); }
-    72% { opacity: 1; transform: translate(-8px, -4px) rotate(-4deg) scale(1.04); }
-    100% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
-}
-
-@keyframes ultraIntroEvaFloat {
-    from { transform: translateY(0) rotate(-1deg); }
-    to { transform: translateY(-12px) rotate(1deg); }
-}
-
-@keyframes ultraIntroShadow {
-    from { transform: scale(0.88); opacity: 0.46; }
-    to { transform: scale(1.04); opacity: 0.32; }
-}
-
-@keyframes ultraIntroWaveLeft {
-    50% { transform: rotate(34deg) translateY(-3px); }
-}
-
-@keyframes ultraIntroWaveRight {
-    50% { transform: rotate(-56deg) translateY(-5px); }
-}
-
-@keyframes ultraIntroSpark {
-    0% { opacity: 0; transform: scale(0.1); }
-    40% { opacity: 1; transform: scale(1.2); }
-    100% { opacity: 0; transform: scale(2.3); }
+@keyframes ultraIntroSheen {
+    to { transform: translateX(115%); }
 }
 
 @keyframes ultraIntroProgress {
@@ -559,45 +372,34 @@
 
 @media (max-width: 700px) {
     .ultra-intro-stage {
-        min-height: 70vh;
-        flex-direction: column;
-        gap: 12px;
+        width: 100%;
+        min-height: 68vh;
+        --intro-open-width: min(350px, 92vw);
+        --intro-closed-size: 84px;
+        --intro-logo-size: 64px;
     }
 
-    .ultra-intro-logo {
-        flex-direction: column;
-        width: min(420px, 92vw);
-        min-height: 240px;
-        gap: 16px;
-        padding: 28px 22px;
-        text-align: center;
-        --intro-mark-shift: 0px;
+    .ultra-intro-badge {
+        padding: 9px;
     }
 
-    .ultra-intro-mark {
-        width: 96px;
+    .ultra-intro-name-mask {
+        padding: 0 14px;
     }
 
     .ultra-intro-word {
-        font-size: clamp(2.35rem, 12vw, 4rem);
-        width: 100%;
-        white-space: nowrap;
-        overflow-wrap: normal;
+        font-size: clamp(2rem, 10vw, 3rem);
+        letter-spacing: 0.01em;
+    }
+}
+
+@media (max-width: 390px) {
+    .ultra-intro-badge {
+        width: min(326px, 92vw);
     }
 
-    .ultra-intro-eva {
-        margin-left: 0;
-        margin-top: -20px;
-        width: 150px;
-        height: 198px;
-    }
-
-    .ultra-intro-orbit {
-        width: min(330px, 78vw);
-    }
-
-    .ultra-intro-progress {
-        bottom: 2%;
+    .ultra-intro-word {
+        font-size: 2rem;
     }
 }
 
@@ -608,436 +410,5 @@
         animation-duration: 0.001ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.001ms !important;
-    }
-}
-
-/* Intro 2026: round logo ripple → wordmark switch ULTRACOMP / ULTRASOFT */
-.ultra-intro {
-    background:
-        radial-gradient(circle at 50% 46%, rgba(18, 61, 187, 0.14), transparent 28%),
-        radial-gradient(circle at 25% 78%, rgba(24, 164, 224, 0.16), transparent 32%),
-        linear-gradient(145deg, #f8fbff 0%, #edf5ff 44%, #ffffff 100%) !important;
-}
-
-.ultra-intro-stage {
-    width: min(1180px, calc(100vw - 40px)) !important;
-    min-height: min(560px, 78vh) !important;
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: clamp(24px, 5vw, 76px) !important;
-}
-
-.ultra-intro-ripple,
-.ultra-intro-orbit {
-    position: absolute !important;
-    left: 44% !important;
-    top: 50% !important;
-    width: min(440px, 56vw) !important;
-    aspect-ratio: 1 !important;
-    border-radius: 50% !important;
-    border: 1px solid rgba(14, 57, 176, 0.14) !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    translate: -50% -50% !important;
-    pointer-events: none !important;
-}
-
-.ultra-intro-orbit::before,
-.ultra-intro-orbit::after {
-    display: none !important;
-}
-
-.ultra-intro-orbit {
-    opacity: 0.34 !important;
-    animation: ultraRippleCore 4.3s cubic-bezier(.18, .9, .18, 1) both !important;
-}
-
-.ultra-intro-ripple {
-    opacity: 0;
-    transform: scale(.22);
-    animation: ultraRoundRipple 2.25s cubic-bezier(.13, .75, .22, 1) both;
-}
-
-.ultra-intro-ripple-one {
-    animation-delay: .05s;
-}
-
-.ultra-intro-ripple-two {
-    animation-delay: .34s;
-}
-
-.ultra-intro-ripple-three {
-    animation-delay: .66s;
-}
-
-.ultra-intro-logo {
-    grid-column: 1 !important;
-    justify-self: center !important;
-    width: min(760px, 62vw) !important;
-    min-height: clamp(120px, 11vw, 156px) !important;
-    gap: clamp(18px, 2.4vw, 30px) !important;
-    padding: clamp(20px, 2.5vw, 30px) clamp(28px, 4.4vw, 58px) !important;
-    border-radius: 999px !important;
-    overflow: visible !important;
-    filter: drop-shadow(0 36px 62px rgba(14, 57, 176, .16)) !important;
-    --intro-mark-shift: 0px !important;
-    animation: ultraRoundLogoCapsule 4.3s cubic-bezier(.16, 1, .3, 1) both !important;
-}
-
-.ultra-intro-logo::before {
-    inset: 0 !important;
-    border: 1px solid rgba(255,255,255,.72) !important;
-    border-radius: inherit !important;
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, .96), rgba(242, 248, 255, .76)),
-        radial-gradient(circle at 19% 30%, rgba(24, 164, 224, .12), transparent 36%) !important;
-    box-shadow:
-        0 30px 80px rgba(14, 57, 176, .16),
-        0 8px 24px rgba(24, 164, 224, .1),
-        inset 0 1px 0 rgba(255,255,255,.96) !important;
-    animation: ultraRoundCapsuleSurface 4.3s cubic-bezier(.16, 1, .3, 1) both !important;
-}
-
-.ultra-intro-logo::after {
-    display: none !important;
-}
-
-.ultra-intro-mark {
-    width: clamp(86px, 7vw, 116px) !important;
-    max-width: none !important;
-    flex: 0 0 auto !important;
-    animation: ultraRoundMark 4.3s cubic-bezier(.16, 1, .3, 1) both !important;
-}
-
-.ultra-intro-morph-dot {
-    animation: ultraRoundDotMorph 1.1s cubic-bezier(.18, 1, .22, 1) both !important;
-}
-
-.ultra-intro-blade {
-    animation: ultraRoundBladeReveal .72s cubic-bezier(.18, .9, .22, 1.18) forwards !important;
-}
-
-.ultra-intro-blade-1 { animation-delay: .72s !important; }
-.ultra-intro-blade-2 { animation-delay: .78s !important; }
-.ultra-intro-blade-3 { animation-delay: .84s !important; }
-.ultra-intro-blade-4 { animation-delay: .9s !important; }
-
-.ultra-intro-dot {
-    animation: ultraRoundDotReveal .55s cubic-bezier(.18, 1.25, .25, 1) forwards !important;
-}
-
-.ultra-intro-dot-1 { animation-delay: .92s !important; }
-.ultra-intro-dot-2 { animation-delay: .97s !important; }
-.ultra-intro-dot-3 { animation-delay: 1.02s !important; }
-.ultra-intro-dot-4 { animation-delay: 1.07s !important; }
-
-.ultra-intro-word {
-    width: min(500px, 43vw) !important;
-    height: 1em !important;
-    color: #123dbb !important;
-    font-size: clamp(2.7rem, 5vw, 4.8rem) !important;
-    font-weight: 950 !important;
-    line-height: .95 !important;
-    letter-spacing: .018em !important;
-    opacity: 1 !important;
-    animation: none !important;
-}
-
-.ultra-intro-word::after {
-    animation: ultraRoundShine 1.05s ease 1.75s both !important;
-}
-
-.ultra-intro-word-comp {
-    animation: ultraRoundWordComp 4.3s cubic-bezier(.2, .95, .2, 1) both !important;
-}
-
-.ultra-intro-word-soft {
-    animation: ultraRoundWordSoft 4.3s cubic-bezier(.2, .95, .2, 1) both !important;
-}
-
-.ultra-intro-eva {
-    grid-column: 2 !important;
-    justify-self: start !important;
-    width: clamp(170px, 17vw, 250px) !important;
-    height: clamp(220px, 23vw, 330px) !important;
-    margin: 0 !important;
-    opacity: 1 !important;
-    animation:
-        ultraRoundEvaEnter 1.05s cubic-bezier(.2, 1, .2, 1) 1.55s both,
-        ultraIntroEvaFloat 1.45s ease-in-out 2.75s infinite alternate !important;
-}
-
-.ultra-intro-eva-model {
-    filter: drop-shadow(0 28px 34px rgba(15, 23, 42, .16)) !important;
-}
-
-.ultra-intro-spark {
-    display: none !important;
-}
-
-.ultra-intro-progress {
-    bottom: 7% !important;
-    width: min(300px, 46vw) !important;
-    background: rgba(18, 61, 187, .1) !important;
-}
-
-.ultra-intro-progress span {
-    animation: ultraIntroProgress 4.15s ease-out forwards !important;
-}
-
-@keyframes ultraRoundRipple {
-    0% {
-        opacity: .55;
-        transform: scale(.12);
-    }
-    68% {
-        opacity: .22;
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1.45);
-    }
-}
-
-@keyframes ultraRippleCore {
-    0% {
-        opacity: 0;
-        transform: scale(.42);
-    }
-    28% {
-        opacity: .45;
-        transform: scale(.95);
-    }
-    100% {
-        opacity: .22;
-        transform: scale(1.04);
-    }
-}
-
-@keyframes ultraRoundLogoCapsule {
-    0% {
-        opacity: 0;
-        width: clamp(130px, 12vw, 170px);
-        transform: translateY(18px) scale(.74);
-    }
-    18% {
-        opacity: 1;
-        width: clamp(130px, 12vw, 170px);
-        transform: translateY(0) scale(1);
-    }
-    38% {
-        width: clamp(130px, 12vw, 170px);
-        transform: translateY(0) scale(1.03);
-    }
-    58%,
-    100% {
-        width: min(760px, 62vw);
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes ultraRoundCapsuleSurface {
-    0%,
-    38% {
-        border-radius: 50%;
-    }
-    58%,
-    100% {
-        border-radius: 999px;
-    }
-}
-
-@keyframes ultraRoundMark {
-    0%,
-    38% {
-        transform: scale(1.12) rotate(-8deg);
-    }
-    58% {
-        transform: scale(1) rotate(4deg);
-    }
-    100% {
-        transform: scale(1) rotate(0deg);
-    }
-}
-
-@keyframes ultraRoundDotMorph {
-    0% {
-        opacity: 0;
-        transform: translate(var(--x1), var(--y1)) scale(.18);
-    }
-    28% {
-        opacity: 1;
-        transform: translate(var(--x1), var(--y1)) scale(1);
-    }
-    70% {
-        opacity: 1;
-        transform: translate(var(--x2), var(--y2)) scale(1.04);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(var(--x2), var(--y2)) scale(.1);
-    }
-}
-
-@keyframes ultraRoundBladeReveal {
-    0% {
-        opacity: 0;
-        transform: scale(.25) rotate(-18deg);
-    }
-    70% {
-        opacity: 1;
-        transform: scale(1.12) rotate(4deg);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) rotate(0deg);
-    }
-}
-
-@keyframes ultraRoundDotReveal {
-    0% {
-        opacity: 0;
-        transform: scale(0);
-    }
-    72% {
-        opacity: 1;
-        transform: scale(1.16);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes ultraRoundWordComp {
-    0%,
-    44% {
-        opacity: 0;
-        transform: translateY(110%);
-        filter: blur(8px);
-    }
-    54%,
-    68% {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
-    78%,
-    100% {
-        opacity: 0;
-        transform: translateY(-112%);
-        filter: blur(8px);
-    }
-}
-
-@keyframes ultraRoundWordSoft {
-    0%,
-    68% {
-        opacity: 0;
-        transform: translateY(112%);
-        filter: blur(8px);
-    }
-    80%,
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
-}
-
-@keyframes ultraRoundShine {
-    to {
-        transform: translateX(120%);
-    }
-}
-
-@keyframes ultraRoundEvaEnter {
-    0% {
-        opacity: 0;
-        transform: translate(42px, 24px) scale(.8) rotate(5deg);
-    }
-    76% {
-        opacity: 1;
-        transform: translate(-6px, -4px) scale(1.04) rotate(-3deg);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1) rotate(0);
-    }
-}
-
-@media (max-width: 700px) {
-    .ultra-intro-stage {
-        width: min(100vw - 26px, 440px) !important;
-        min-height: 72vh !important;
-        grid-template-columns: 1fr !important;
-        gap: 14px !important;
-    }
-
-    .ultra-intro-ripple,
-    .ultra-intro-orbit {
-        left: 50% !important;
-        top: 37% !important;
-        width: min(330px, 82vw) !important;
-    }
-
-    .ultra-intro-logo {
-        width: min(92vw, 420px) !important;
-        min-height: 210px !important;
-        flex-direction: column !important;
-        gap: 16px !important;
-        padding: 26px 18px !important;
-        animation: ultraRoundMobileLogo 4.3s cubic-bezier(.16, 1, .3, 1) both !important;
-    }
-
-    .ultra-intro-mark {
-        width: 96px !important;
-    }
-
-    .ultra-intro-word {
-        width: 100% !important;
-        font-size: clamp(2.35rem, 12vw, 4rem) !important;
-        text-align: center !important;
-    }
-
-    .ultra-intro-eva {
-        grid-column: 1 !important;
-        justify-self: center !important;
-        width: 142px !important;
-        height: 190px !important;
-        margin-top: -18px !important;
-    }
-
-    .ultra-intro-progress {
-        bottom: 4% !important;
-        width: min(260px, 62vw) !important;
-    }
-}
-
-@keyframes ultraRoundMobileLogo {
-    0% {
-        opacity: 0;
-        width: 150px;
-        min-height: 150px;
-        transform: translateY(18px) scale(.74);
-    }
-    18% {
-        opacity: 1;
-        width: 150px;
-        min-height: 150px;
-        transform: translateY(0) scale(1);
-    }
-    38% {
-        width: 150px;
-        min-height: 150px;
-        transform: translateY(0) scale(1.03);
-    }
-    58%,
-    100% {
-        width: min(92vw, 420px);
-        min-height: 210px;
-        transform: translateY(0) scale(1);
     }
 }
