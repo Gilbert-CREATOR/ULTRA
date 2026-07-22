@@ -27,6 +27,7 @@ const ULTRASOFT_CONTACT_EMAIL = process.env.ULTRASOFT_CONTACT_EMAIL || 'ultrasof
 const UPLOAD_DIR = path.resolve(rootDir, process.env.UPLOAD_DIR || './IMAGENES');
 const BACKUP_DIR = path.resolve(rootDir, process.env.BACKUP_DIR || './backups');
 const BACKUP_RETENTION_DAYS = Math.max(1, Number(process.env.BACKUP_RETENTION_DAYS || 14));
+const MYSQL_RETRY_INTERVAL_MS = Math.max(5000, Number(process.env.MYSQL_RETRY_INTERVAL_MS || 30000));
 const DEFAULT_WEB_CATEGORIES = {
     computers: 'Computadoras', laptops: 'Laptops', gaming: 'Gaming', monitors: 'Monitores',
     components: 'Componentes', peripherals: 'Periféricos', printers: 'Impresoras',
@@ -174,6 +175,7 @@ async function initDatabase() {
     await hydratePersistentState();
     dbReady = true;
     productDbReady = true;
+    lastInitFailureAt = 0;
     scheduleAutomaticBackups();
     console.log(`MySQL conectado. Productos disponibles desde articulo_servicio: ${rows[0].count}.`);
 }
@@ -3776,10 +3778,16 @@ function serveStatic(req, res, url) {
 }
 
 let initPromise = null;
+let lastInitFailureAt = 0;
 
 async function prepareApp() {
-    if (!initPromise) {
+    const shouldRetryMysql = !productDbReady
+        && Boolean(getMysqlConfig())
+        && (!initPromise || Date.now() - lastInitFailureAt >= MYSQL_RETRY_INTERVAL_MS);
+
+    if (!initPromise || shouldRetryMysql) {
         initPromise = initDatabase().catch(async error => {
+            lastInitFailureAt = Date.now();
             console.error('Could not initialize database. Using memory fallback:', error.message);
             await resetMysqlPool();
         });
