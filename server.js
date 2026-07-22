@@ -76,6 +76,7 @@ async function resetMysqlPool() {
 let dbReady = false;
 let productDbReady = false;
 let mysqlPool = null;
+let lastMysqlInitError = null;
 const imageIndex = buildImageIndex();
 
 function warnMissingOwnerCredentials() {
@@ -176,6 +177,7 @@ async function initDatabase() {
     dbReady = true;
     productDbReady = true;
     lastInitFailureAt = 0;
+    lastMysqlInitError = null;
     scheduleAutomaticBackups();
     console.log(`MySQL conectado. Productos disponibles desde articulo_servicio: ${rows[0].count}.`);
 }
@@ -256,6 +258,14 @@ function getMysqlConfig() {
 function isTransientMysqlConnectionError(error) {
     return ['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'EHOSTUNREACH', 'ENOTFOUND', 'PROTOCOL_CONNECTION_LOST']
         .includes(error && error.code);
+}
+
+function publicMysqlError(error) {
+    if (!error) return null;
+    return {
+        code: error.code || error.errorno || 'UNKNOWN',
+        message: String(error.message || 'No se pudo conectar a MySQL').replace(/(password|pass|pwd)=([^&\s]+)/ig, '$1=***')
+    };
 }
 
 function getDefaultContent() {
@@ -823,6 +833,7 @@ async function handleApi(req, res, url) {
                     adminConfigured: missingEnv.length === 0,
                     ownerConfigured: Boolean(OWNER_EMAIL && String(OWNER_PASSWORD || '').trim()),
                     missingEnv,
+                    mysqlError: publicMysqlError(error),
                     timestamp,
                     version: packageInfo.version
                 });
@@ -838,6 +849,7 @@ async function handleApi(req, res, url) {
             adminConfigured: missingEnv.length === 0,
             ownerConfigured: Boolean(OWNER_EMAIL && String(OWNER_PASSWORD || '').trim()),
             missingEnv,
+            mysqlError: publicMysqlError(lastMysqlInitError),
             timestamp,
             version: packageInfo.version
         });
@@ -3788,6 +3800,7 @@ async function prepareApp() {
     if (!initPromise || shouldRetryMysql) {
         initPromise = initDatabase().catch(async error => {
             lastInitFailureAt = Date.now();
+            lastMysqlInitError = error;
             console.error('Could not initialize database. Using memory fallback:', error.message);
             await resetMysqlPool();
         });
