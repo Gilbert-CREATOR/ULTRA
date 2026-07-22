@@ -438,23 +438,20 @@
         const searchButton = document.getElementById('quotesSearchButton');
         const clearButton = document.getElementById('quotesClearButton');
         
-        if (searchButton) {
-            searchButton.addEventListener('click', () => {
-                currentSearch = searchInput.value.trim();
-                currentStatus = statusFilter.value;
-                currentPage = 1;
-                refreshQuotesTable();
-            });
-        }
+        const runQuoteSearch = () => {
+            currentSearch = searchInput ? searchInput.value.trim() : '';
+            currentStatus = statusFilter ? statusFilter.value : currentStatus;
+            currentPage = 1;
+            refreshQuotesTable();
+        };
+
+        if (searchButton) searchButton.addEventListener('click', runQuoteSearch);
         
         if (searchInput) {
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    currentSearch = searchInput.value.trim();
-                    currentStatus = statusFilter.value;
-                    currentPage = 1;
-                    refreshQuotesTable();
-                }
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                runQuoteSearch();
             });
         }
         

@@ -1117,28 +1117,26 @@
         const searchButton = document.getElementById('mysqlProductsSearchButton');
         const clearButton = document.getElementById('mysqlProductsClearButton');
         
-        if (searchButton) {
-            searchButton.addEventListener('click', () => {
-                currentSearch = searchInput.value.trim();
-                currentAvailability = availabilityFilter ? availabilityFilter.value : currentAvailability;
-                currentIssue = issueFilter ? issueFilter.value : currentIssue;
-                currentSort = sortFilter ? sortFilter.value : currentSort;
-                currentPage = 1;
-                refreshProductsTable();
-            });
-        }
+        const runProductSearch = () => {
+            currentSearch = searchInput ? searchInput.value.trim() : '';
+            currentAvailability = availabilityFilter ? availabilityFilter.value : currentAvailability;
+            currentIssue = issueFilter ? issueFilter.value : currentIssue;
+            currentSort = sortFilter ? sortFilter.value : currentSort;
+            currentPage = 1;
+            refreshProductsTable();
+        };
+
+        if (searchButton) searchButton.addEventListener('click', runProductSearch);
         
         if (availabilityFilter) availabilityFilter.addEventListener('change', () => { currentAvailability = availabilityFilter.value; currentPage = 1; refreshProductsTable(); });
         if (issueFilter) issueFilter.addEventListener('change', () => { currentIssue = issueFilter.value; currentPage = 1; refreshProductsTable(); });
         if (sortFilter) sortFilter.addEventListener('change', () => { currentSort = sortFilter.value; currentPage = 1; refreshProductsTable(); });
 
         if (searchInput) {
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    currentSearch = searchInput.value.trim();
-                    currentPage = 1;
-                    refreshProductsTable();
-                }
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                runProductSearch();
             });
         }
         
