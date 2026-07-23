@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Producto - Ultracomp</title>
     <link rel="stylesheet" href="/GENERAL/ultra.css">
+    <link rel="stylesheet" href="/ULTRACOMP/ultracomp.css">
     <link rel="stylesheet" href="/ULTRACOMP/producto-detalle.css">
     <link rel="stylesheet" href="/ULTRACOMP/eva.css?v=20260715-eva-fallback">
     <script type="module" src="/GENERAL/model-viewer.min.js?v=20260713"></script>
@@ -21,8 +22,8 @@
                     <span></span><span></span><span></span>
                 </button>
                 <div class="nav-links" id="primaryNavigation">
-                    <a href="/ULTRACOMP/productos.html" class="nav-product-cta">Ver productos</a>
                     <a href="/ULTRASOFT/ultrasoft.html">Ultrasoft</a>
+                    <a href="/ULTRACOMP/index.html">Ultracomp</a>
                     <a href="/mi-cotizacion" class="quote-cart-button">
                         Mi cotización <span id="quoteCartCounter"></span>
                     </a>
@@ -32,13 +33,8 @@
     </header>
 
     <section class="product-detail-section">
-        <div class="container">
-            <nav class="product-breadcrumb" aria-label="Ruta de navegación">
-                <a href="/ULTRACOMP/productos.html">Productos</a>
-                <span>/</span>
-                <span id="productBreadcrumbName">Detalle</span>
-            </nav>
-            <div class="product-detail">
+      <div class="container">
+        <div class="product-detail">
                 <div class="product-detail-image">
                     <span class="product-image-badge">Disponible</span>
                     <img id="productImage" src="" alt="Producto">
@@ -167,7 +163,6 @@
             }
 
             document.getElementById('productName').textContent = product.name;
-            document.getElementById('productBreadcrumbName').textContent = product.name;
             document.getElementById('productCodeLabel').textContent = `Código artículo ${getArticuloCode(product)}`;
             document.getElementById('productDescription').textContent = product.description;
             document.getElementById('productPrice').textContent = product.price;
@@ -223,8 +218,8 @@
                         + (item.categories || []).filter(category => currentCategories.has(category)).length
                 }))
                 .sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name))
-                .slice(0, 4)
-                .map(entry => entry.item);
+            .slice(0, 12)
+        .map(entry => entry.item);
 
             relatedContainer.className = 'related-products-grid';
             relatedProducts.forEach(item => {

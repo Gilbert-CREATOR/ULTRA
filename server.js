@@ -24,7 +24,8 @@ const WHATSAPP_PHONE = process.env.WHATSAPP_PHONE || '8095726552';
 const WHATSAPP_ULTRACOMP = process.env.WHATSAPP_ULTRACOMP || WHATSAPP_PHONE || '8095726552';
 const WHATSAPP_ULTRASOFT = process.env.WHATSAPP_ULTRASOFT || WHATSAPP_PHONE || '8095726552';
 const ULTRASOFT_CONTACT_EMAIL = process.env.ULTRASOFT_CONTACT_EMAIL || 'ultrasoftsolicitud@gmail.com';
-const UPLOAD_DIR = path.resolve(rootDir, process.env.UPLOAD_DIR || './IMAGENES');
+let UPLOAD_DIR = path.resolve(rootDir, process.env.UPLOAD_DIR || './IMAGENES');
+const FALLBACK_UPLOAD_DIR = path.resolve('/tmp', 'ultra-imagenes');
 const BACKUP_DIR = path.resolve(rootDir, process.env.BACKUP_DIR || './backups');
 const BACKUP_RETENTION_DAYS = Math.max(1, Number(process.env.BACKUP_RETENTION_DAYS || 14));
 const MYSQL_RETRY_INTERVAL_MS = Math.max(5000, Number(process.env.MYSQL_RETRY_INTERVAL_MS || 30000));
@@ -53,8 +54,27 @@ const loginAttempts = new Map();
 let mailTransporter = null;
 
 function ensureUploadDir() {
-    if (!fs.existsSync(UPLOAD_DIR)) {
-        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+    try {
+        if (!fs.existsSync(UPLOAD_DIR)) {
+            fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+        }
+        return true;
+    } catch (error) {
+        if (UPLOAD_DIR === FALLBACK_UPLOAD_DIR) {
+            console.warn(`No se pudo preparar la carpeta temporal de imágenes "${FALLBACK_UPLOAD_DIR}". Las subidas quedan deshabilitadas temporalmente. Error: ${error.message}`);
+            return false;
+        }
+        console.warn(`No se pudo usar UPLOAD_DIR="${UPLOAD_DIR}". Usando carpeta temporal: ${FALLBACK_UPLOAD_DIR}. Error: ${error.message}`);
+        UPLOAD_DIR = FALLBACK_UPLOAD_DIR;
+        try {
+            if (!fs.existsSync(UPLOAD_DIR)) {
+                fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+            }
+            return true;
+        } catch (fallbackError) {
+            console.warn(`No se pudo preparar la carpeta temporal de imágenes "${FALLBACK_UPLOAD_DIR}". Las subidas quedan deshabilitadas temporalmente. Error: ${fallbackError.message}`);
+            return false;
+        }
     }
 }
 
@@ -3714,12 +3734,25 @@ function serveStatic(req, res, url) {
 
     let filePath = resolveStaticPath(url.pathname);
     if (url.pathname.startsWith('/IMAGENES/')) {
-        const uploadCandidate = path.join(UPLOAD_DIR, decodeURIComponent(url.pathname.replace('/IMAGENES/', '')));
-        if (fs.existsSync(uploadCandidate)) filePath = uploadCandidate;
+        const imageName = decodeURIComponent(url.pathname.replace('/IMAGENES/', ''));
+        const uploadCandidate = path.join(UPLOAD_DIR, imageName);
+        const staticImageCandidate = path.join(rootDir, 'IMAGENES', imageName);
+        if (fs.existsSync(uploadCandidate)) {
+            filePath = uploadCandidate;
+        } else if (fs.existsSync(staticImageCandidate)) {
+            filePath = staticImageCandidate;
+        }
     }
     const normalized = path.normalize(filePath);
 
-    if ((url.pathname.startsWith('/IMAGENES/') ? !normalized.startsWith(UPLOAD_DIR) : !normalized.startsWith(rootDir)) || path.basename(normalized).startsWith('.')) {
+    if (
+        (
+            url.pathname.startsWith('/IMAGENES/')
+                ? !normalized.startsWith(UPLOAD_DIR) && !normalized.startsWith(path.join(rootDir, 'IMAGENES'))
+                : !normalized.startsWith(rootDir)
+        )
+        || path.basename(normalized).startsWith('.')
+    ) {
         res.writeHead(403);
         res.end('Forbidden');
         return;
