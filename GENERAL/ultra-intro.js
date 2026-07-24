@@ -3,6 +3,42 @@
 
     if (document.getElementById('ultraIntro')) return;
 
+    // Detectar la marca de la página actual y de dónde viene el usuario
+    const currentBrand = document.body.dataset.ultraBrand || '';
+    // La dirección: si estamos en ultrasoft, el usuario viene de ultracomp, y viceversa.
+    // También aceptamos ?from=ultracomp / ?from=ultrasoft en la URL (para links explícitos).
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromParam = urlParams.get('from') || '';
+    let fromBrand = fromParam;
+
+    if (!fromBrand) {
+        try {
+            const ref = document.referrer;
+            if (ref) {
+                if (/ultracomp/i.test(ref) || /\/ULTRACOMP\//i.test(ref)) {
+                    fromBrand = 'ultracomp';
+                } else if (/ultrasoft/i.test(ref) || /\/ULTRASOFT\//i.test(ref)) {
+                    fromBrand = 'ultrasoft';
+                }
+            }
+        } catch (_) {}
+    }
+
+    // Orden de las palabras: primero la marca origen, luego la destino.
+    // Si no hay referrer o es la primera visita, por defecto ULTRACOMP → ULTRASOFT.
+    let firstLabel = 'ULTRACOMP';
+    let secondLabel = 'ULTRASOFT';
+
+    if (fromBrand === 'ultracomp' && currentBrand === 'ultrasoft') {
+        // Viniendo de Ultracomp hacia Ultrasoft: primero ULTRACOMP, luego ULTRASOFT ✓ (default)
+        firstLabel = 'ULTRACOMP';
+        secondLabel = 'ULTRASOFT';
+    } else if (fromBrand === 'ultrasoft' && currentBrand === 'ultracomp') {
+        // Viniendo de Ultrasoft hacia Ultracomp: primero ULTRASOFT, luego ULTRACOMP
+        firstLabel = 'ULTRASOFT';
+        secondLabel = 'ULTRACOMP';
+    }
+
     const intro = document.createElement('div');
     intro.id = 'ultraIntro';
     intro.className = 'ultra-intro';
@@ -14,7 +50,7 @@
             <span class="ultra-intro-ripple ultra-intro-ripple-two"></span>
             <span class="ultra-intro-ripple ultra-intro-ripple-three"></span>
 
-            <div class="ultra-intro-badge" aria-label="ULTRACOMP y ULTRASOFT">
+            <div class="ultra-intro-badge" aria-label="${firstLabel} y ${secondLabel}">
                 <div class="ultra-intro-round">
                     <svg class="ultra-intro-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Logo Ultra">
                         <defs>
@@ -42,9 +78,9 @@
                 </div>
 
                 <div class="ultra-intro-name-mask">
-                    <div class="ultra-intro-word" aria-label="ULTRACOMP y ULTRASOFT">
-                        <span class="ultra-intro-word-item ultra-intro-word-comp">ULTRACOMP</span>
-                        <span class="ultra-intro-word-item ultra-intro-word-soft">ULTRASOFT</span>
+                    <div class="ultra-intro-word" aria-label="${firstLabel} y ${secondLabel}">
+                        <span class="ultra-intro-word-item ultra-intro-word-first">${firstLabel}</span>
+                        <span class="ultra-intro-word-item ultra-intro-word-second">${secondLabel}</span>
                     </div>
                 </div>
             </div>

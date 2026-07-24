@@ -2180,3 +2180,101 @@
         display: none !important;
     }
 }
+
+/* ── Monitores grandes (≥ 1920px) ─────────────────────────────────────────── */
+@media (min-width: 1920px) {
+    /* Contenedor más amplio para aprovechar el espacio */
+    .ultracomp-home section > .container,
+    .ultracomp-home .container-banner,
+    .ultracomp-home section.container {
+        width: min(1520px, calc(100% - 80px));
+    }
+
+    /* Hero: limitar crecimiento del título */
+    .ultracomp-home .home-hero h1 {
+        font-size: clamp(72px, 4.5vw, 96px);
+    }
+
+    /* Carrusel de productos: más tarjetas visibles */
+    .ultracomp-home .products-carousel {
+        grid-auto-columns: minmax(260px, 1fr);
+    }
+
+    .ultracomp-home .product-image {
+        height: 260px;
+    }
+
+    /* Banner carousel: tarjetas más altas */
+    .ultracomp-home .banner-card {
+        min-width: min(860px, 60vw);
+        height: 520px;
+    }
+
+    /* Grids más generosos */
+    .ultracomp-home .services-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .ultracomp-home .product-lines-grid {
+        gap: 20px;
+    }
+
+    /* Headings de sección: tope más alto */
+    .ultracomp-home section > .container > h2,
+    .ultracomp-home .featured-products-section h2,
+    .ultracomp-home .product-lines-section h2,
+    .ultracomp-home .about-section h2,
+    .ultracomp-home .services-section h2,
+    .ultracomp-home .timeline-section h2 {
+        font-size: clamp(52px, 3.2vw, 68px);
+    }
+
+    .home-section-heading h2 {
+        font-size: clamp(48px, 3vw, 64px);
+    }
+}
+
+/* ── Monitores ultrawide (≥ 2560px / 35") ────────────────────────────────── */
+@media (min-width: 2560px) {
+    .ultracomp-home section > .container,
+    .ultracomp-home .container-banner,
+    .ultracomp-home section.container {
+        width: min(1900px, calc(100% - 120px));
+    }
+
+    .ultracomp-home .home-hero h1 {
+        font-size: clamp(80px, 3.8vw, 108px);
+    }
+
+    .ultracomp-home .products-carousel {
+        grid-auto-columns: minmax(300px, 1fr);
+    }
+
+    .ultracomp-home .product-image {
+        height: 300px;
+    }
+
+    .ultracomp-home .banner-card {
+        min-width: min(1100px, 50vw);
+        height: 600px;
+    }
+
+    .ultracomp-home section > .container > h2,
+    .ultracomp-home .featured-products-section h2,
+    .ultracomp-home .product-lines-section h2,
+    .ultracomp-home .about-section h2,
+    .ultracomp-home .services-section h2,
+    .ultracomp-home .timeline-section h2 {
+        font-size: clamp(60px, 2.8vw, 80px);
+    }
+
+    .home-section-heading h2 {
+        font-size: clamp(56px, 2.6vw, 76px);
+    }
+
+    .ultracomp-home .featured-subtitle {
+        font-size: 18px;
+        max-width: 740px;
+    }
+}

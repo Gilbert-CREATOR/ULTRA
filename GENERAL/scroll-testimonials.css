@@ -670,3 +670,54 @@ body:not(.ultracomp-home) .scroll-testimonials-sticky,
         animation: none !important;
     }
 }
+
+/* ── Monitores grandes (≥ 1920px) ─────────────────────────────────────────── */
+@media (min-width: 1920px) {
+    .scroll-testimonials-inner {
+        width: min(1520px, calc(100% - 80px));
+    }
+
+    .scroll-testimonials-heading h2 {
+        font-size: clamp(62px, 4vw, 82px);
+    }
+
+    .scroll-testimonial-quote blockquote {
+        font-size: clamp(42px, 2.8vw, 58px);
+    }
+
+    .scroll-testimonials-layout {
+        grid-template-columns: minmax(300px, .55fr) minmax(0, 1.45fr);
+        gap: clamp(32px, 3.5vw, 72px);
+    }
+
+    .scroll-testimonial-quote {
+        min-height: 460px;
+    }
+}
+
+/* ── Monitores ultrawide (≥ 2560px / 35") ────────────────────────────────── */
+@media (min-width: 2560px) {
+    .scroll-testimonials-inner {
+        width: min(1900px, calc(100% - 120px));
+    }
+
+    .scroll-testimonials-heading h2 {
+        font-size: clamp(72px, 3.2vw, 96px);
+    }
+
+    .scroll-testimonial-quote blockquote {
+        font-size: clamp(48px, 2.4vw, 68px);
+    }
+
+    .scroll-testimonials-heading p {
+        font-size: 20px;
+    }
+
+    .scroll-testimonial-quote {
+        min-height: 500px;
+    }
+
+    .testimonial-metrics strong {
+        font-size: clamp(38px, 2.2vw, 54px);
+    }
+}
