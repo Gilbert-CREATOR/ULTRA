@@ -110,7 +110,7 @@
             button.type = 'button';
             button.role = 'tab';
             button.setAttribute('aria-label', `Ver testimonio de ${item.name}`);
-            button.innerHTML = `<span>${item.avatar}</span><span class="testimonial-user-copy"><strong>${item.name}</strong><small>${item.role} · ${item.company}</small></span>`;
+            button.innerHTML = `<span>${item.avatar}</span><span class="testimonial-user-copy"><strong>${item.name}</strong></span>`;
             button.addEventListener('click', () => {
                 const stageTop = window.scrollY + stage.getBoundingClientRect().top;
                 const scrollable = Math.max(1, stage.offsetHeight - window.innerHeight);
@@ -144,8 +144,8 @@
                 quote.querySelector('blockquote').textContent = `“${item.reviewText}”`;
                 quote.querySelector('.scroll-testimonial-avatar').textContent = item.avatar;
                 quote.querySelector('footer strong').textContent = item.name;
-                quote.querySelector('footer span').textContent = item.role;
-                quote.querySelector('footer small').textContent = item.company;
+                quote.querySelector('footer span').textContent = '';
+                quote.querySelector('footer small').textContent = '';
                 quote.classList.remove('is-changing');
                 const activeButton = users.children[index];
                 if (users.scrollWidth > users.clientWidth) {
