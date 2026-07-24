@@ -730,6 +730,10 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
+                        // Activar timeline-items dentro de la sección cuando se revela
+                        entry.target.querySelectorAll('.timeline-item').forEach(item => {
+                            item.classList.add('visible');
+                        });
                         observer.unobserve(entry.target);
                     }
                 });

@@ -373,31 +373,30 @@ function updateCurrentYear() {
 }
 
 function addTimelineAnimations() {
-    const timelineItems = document.querySelectorAll('.timeline-item');
+    const timelineItems = document.querySelectorAll('.timeline-item, .timeline-step');
+
+    if (!timelineItems.length) return;
 
     if (!('IntersectionObserver' in window)) {
-        timelineItems.forEach(item => {
-            item.classList.add('visible');
-        });
+        timelineItems.forEach(item => item.classList.add('visible'));
         return;
     }
-    
+
     const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
+        threshold: 0.08,
+        rootMargin: '0px 0px -40px 0px'
     };
-    
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
-    
-    timelineItems.forEach(item => {
-        observer.observe(item);
-    });
+
+    timelineItems.forEach(item => observer.observe(item));
 }
 
 // Close modal when clicking outside
