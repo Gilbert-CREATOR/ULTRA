@@ -2618,7 +2618,7 @@ function normalizeProduct(row, includeAdminPrices = false) {
         hasWarranty: toNumber(row.garantia) > 0,
         stock,
         existence: stock,
-        image: row.imagen_url || findImageForProduct(row),
+        image: row.imagen_url || '/IMAGENES/producto-sin-imagen.svg',
         specs,
         shortSpecs: specs.slice(0, 4),
         features: [
@@ -3534,6 +3534,12 @@ async function getProductFlagsFromMysql(codigoArticulo) {
     };
 }
 
+// Ventana de tiempo (en días) para considerar un producto como "nuevo".
+// Un producto aparece en la sección Nuevos si fue creado o actualizado (restock)
+// dentro de esta ventana. Al cumplirse el plazo desaparece automáticamente sin
+// necesidad de modificar nada en la base de datos.
+const NEW_PRODUCT_WINDOW_DAYS = 45; // 1.5 meses
+
 async function getProductsByFlag(flagType, limit) {
     const flagColumnMap = {
         'featured': 'es_destacado',
@@ -3549,9 +3555,85 @@ async function getProductsByFlag(flagType, limit) {
     }
 
     const today = new Date().toISOString().split('T')[0];
-
-    let whereClause = `WHERE pf.${column} = 1 AND pf.activo = 1`;
     const params = [];
+
+    // ── Categoría "nuevos": automática por fecha, sin flag manual ──────────
+    // Aparecen productos creados o actualizados (restock) en los últimos
+    // NEW_PRODUCT_WINDOW_DAYS días. Se ordenan del más reciente al más antiguo.
+    if (flagType === 'new') {
+        params.push(NEW_PRODUCT_WINDOW_DAYS, NEW_PRODUCT_WINDOW_DAYS, limit);
+        const [rows] = await mysqlPool.query(`
+            SELECT
+                a.codigo, a.articulo_codigo, a.nombre, a.uso, a.unidad,
+                a.garantia, a.porciento_itbis, a.precio_d,
+                a.precio_d * (1 + (COALESCE(a.porciento_itbis, 0) / 100)) AS precio_neto,
+                COALESCE(e.existencia_total, 0) AS existencia_total,
+                a.moneda_codigo, a.disponible,
+                a.fecha_hora_crea,
+                a.fecha_hora_actualiza,
+                (
+                    SELECT pi.imagen_url
+                    FROM producto_imagenes pi
+                    WHERE pi.codigo_articulo = a.codigo
+                      AND pi.activo = 1
+                      AND TRIM(COALESCE(pi.imagen_url, '')) <> ''
+                    ORDER BY pi.es_principal DESC, pi.id DESC
+                    LIMIT 1
+                ) AS imagen_url,
+                (
+                    SELECT GROUP_CONCAT(wpc.category_slug ORDER BY wpc.category_slug SEPARATOR ',')
+                    FROM web_product_categories wpc
+                    INNER JOIN web_categories wc ON wc.slug = wpc.category_slug AND wc.active = 1
+                    WHERE wpc.codigo_articulo = a.codigo
+                ) AS assigned_categories,
+                (
+                    SELECT wb.name
+                    FROM web_product_brands wpb
+                    INNER JOIN web_brands wb ON wb.slug = wpb.brand_slug AND wb.active = 1
+                    WHERE wpb.codigo_articulo = a.codigo
+                    LIMIT 1
+                ) AS assigned_brand,
+                NULL AS es_destacado, NULL AS es_oferta, 1 AS es_nuevo,
+                NULL AS es_mas_vendido, NULL AS es_recomendado,
+                NULL AS precio_oferta
+            FROM articulo_servicio a
+            LEFT JOIN (
+                SELECT articulo_codigo, SUM(existencia) AS existencia_total
+                FROM existencia
+                GROUP BY articulo_codigo
+            ) e ON e.articulo_codigo = a.codigo
+            WHERE a.activo = 1
+              AND a.catalogo = 1
+              AND a.presentar_facturacion = 1
+              AND a.disponible = 1
+              AND COALESCE(e.existencia_total, 0) > 0
+              AND a.tipo_articulo_servicio = 'Articulo'
+              AND (
+                  a.fecha_hora_crea >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                  OR a.fecha_hora_actualiza >= DATE_SUB(NOW(), INTERVAL ? DAY)
+              )
+            ORDER BY GREATEST(
+                COALESCE(a.fecha_hora_actualiza, a.fecha_hora_crea),
+                a.fecha_hora_crea
+            ) DESC
+            LIMIT ?
+        `, params);
+
+        return rows.map(row => {
+            const product = normalizeProduct(row);
+            product.flags = {
+                esDestacado: false,
+                esOferta: false,
+                esNuevo: true,
+                esMasVendido: false,
+                esRecomendado: false
+            };
+            return product;
+        });
+    }
+
+    // ── Resto de flags: comportamiento original ─────────────────────────────
+    let whereClause = `WHERE pf.${column} = 1 AND pf.activo = 1`;
 
     // Si es oferta, verificar fechas
     if (flagType === 'offer') {
@@ -3567,6 +3649,8 @@ async function getProductsByFlag(flagType, limit) {
             a.precio_d * (1 + (COALESCE(a.porciento_itbis, 0) / 100)) AS precio_neto,
             COALESCE(e.existencia_total, 0) AS existencia_total,
             a.moneda_codigo, a.disponible,
+            a.fecha_hora_crea,
+            a.fecha_hora_actualiza,
             (
                 SELECT pi.imagen_url
                 FROM producto_imagenes pi
@@ -3611,7 +3695,6 @@ async function getProductsByFlag(flagType, limit) {
 
     return rows.map(row => {
         const product = normalizeProduct(row);
-        // Agregar flags al producto
         product.flags = {
             esDestacado: row.es_destacado === 1,
             esOferta: row.es_oferta === 1,
