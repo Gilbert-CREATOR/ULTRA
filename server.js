@@ -97,7 +97,6 @@ let dbReady = false;
 let productDbReady = false;
 let mysqlPool = null;
 let lastMysqlInitError = null;
-const imageIndex = buildImageIndex();
 
 function warnMissingOwnerCredentials() {
     if (OWNER_EMAIL && OWNER_PASSWORD) return;
@@ -2448,26 +2447,6 @@ async function saveUploadedImage(productId, upload) {
     return { filename: file, publicPath: `/IMAGENES/${file}` };
 }
 
-function buildImageIndex() {
-    const imagesDir = path.join(rootDir, 'IMAGENES');
-    if (!fs.existsSync(imagesDir)) return [];
-    const extensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.tiff', '.svg']);
-    return fs.readdirSync(imagesDir)
-        .filter(file => extensions.has(path.extname(file).toLowerCase()))
-        .map(file => {
-            const basename = file.replace(path.extname(file), '');
-            const normalized = normalizeText(basename);
-            const productPrefix = normalized.match(/^PRODUCTO\s+([A-Z0-9_-]+)(?:\s|$)/);
-            return {
-                file,
-                path: `/IMAGENES/${encodeURIComponent(file)}`,
-                normalized,
-                productCode: productPrefix ? productPrefix[1] : null,
-                tokens: new Set(normalized.split(' ').filter(Boolean))
-            };
-        });
-}
-
 function normalizeText(value) {
     return String(value || '')
         .normalize('NFD')
@@ -2527,49 +2506,6 @@ function inferBrand(name) {
         return token.replace(/[,:;.]+$/g, '');
     }
     return rawTokens[0] || 'GENERAL';
-}
-
-function findImageForProduct(row) {
-    const exactCodes = [row.articulo_codigo, row.codigo_usr, row.referencia, row.codigo]
-        .map(normalizeText)
-        .filter(value => value && value !== '0');
-
-    // Las imágenes importadas siguen el patrón producto-<articulo_codigo>-nombre.
-    // Se compara el prefijo como campo independiente para evitar confundir el
-    // código con números incluidos en el nombre o en la marca de tiempo.
-    for (const candidate of exactCodes) {
-        const found = imageIndex.find(image => image.productCode === candidate);
-        if (found) return found.path;
-    }
-
-    const modelTokens = normalizeText(row.nombre)
-        .split(' ')
-        .filter(token => token.length >= 4 && /[A-Z]/.test(token) && /[0-9]/.test(token));
-
-    const directCandidates = [row.codigo_usr, row.referencia, ...modelTokens]
-        .map(normalizeText)
-        .filter(value => value && value !== '0')
-        .filter(value => value.length >= 4 || (/[A-Z]/.test(value) && /[0-9]/.test(value) && value.length >= 3));
-
-    for (const candidate of directCandidates) {
-        const found = imageIndex.find(image => image.normalized.includes(candidate));
-        if (found) return found.path;
-    }
-
-    const nameTokens = normalizeText(row.nombre)
-        .split(' ')
-        .filter(token => token.length >= 3 && !/^\d+$/.test(token));
-
-    let best = null;
-    for (const image of imageIndex) {
-        let score = 0;
-        for (const token of nameTokens) {
-            if (image.tokens.has(token) || image.normalized.includes(token)) score += token.length >= 5 ? 2 : 1;
-        }
-        if (score >= 8 && (!best || score > best.score)) best = { score, image };
-    }
-
-    return best ? best.image.path : '/IMAGENES/producto-sin-imagen.svg';
 }
 
 function normalizeProductImagePath(value) {
@@ -2656,7 +2592,9 @@ function normalizeProduct(row, includeAdminPrices = false) {
         hasWarranty: toNumber(row.garantia) > 0,
         stock,
         existence: stock,
-        image: normalizeProductImagePath(row.imagen_url) || findImageForProduct(row),
+        // Una imagen solo se muestra cuando fue asignada explícitamente en
+        // producto_imagenes. Nunca se infiere por código, nombre o similitud.
+        image: normalizeProductImagePath(row.imagen_url) || '/IMAGENES/producto-sin-imagen.svg',
         specs,
         shortSpecs: specs.slice(0, 4),
         features: [
@@ -3092,14 +3030,13 @@ async function getProductsWithoutImage() {
     `);
 
     return rows
-        .map(row => ({ row, resolvedImage: row.imagen_url || findImageForProduct(row) }))
-        .filter(item => item.resolvedImage === '/IMAGENES/producto-sin-imagen.svg')
-        .map(item => ({
-            id: String(item.row.codigo),
-            name: item.row.nombre,
-            code: item.row.articulo_codigo ? String(item.row.articulo_codigo) : String(item.row.codigo),
-            active: Number(item.row.activo) === 1,
-            catalog: Number(item.row.catalogo) === 1
+        .filter(row => !String(row.imagen_url || '').trim())
+        .map(row => ({
+            id: String(row.codigo),
+            name: row.nombre,
+            code: row.articulo_codigo ? String(row.articulo_codigo) : String(row.codigo),
+            active: Number(row.activo) === 1,
+            catalog: Number(row.catalogo) === 1
         }));
 }
 
