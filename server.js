@@ -2454,12 +2454,18 @@ function buildImageIndex() {
     const extensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.tiff', '.svg']);
     return fs.readdirSync(imagesDir)
         .filter(file => extensions.has(path.extname(file).toLowerCase()))
-        .map(file => ({
-            file,
-            path: `/IMAGENES/${file}`,
-            normalized: normalizeText(file.replace(path.extname(file), '')),
-            tokens: new Set(normalizeText(file.replace(path.extname(file), '')).split(' ').filter(Boolean))
-        }));
+        .map(file => {
+            const basename = file.replace(path.extname(file), '');
+            const normalized = normalizeText(basename);
+            const productPrefix = normalized.match(/^PRODUCTO\s+([A-Z0-9_-]+)(?:\s|$)/);
+            return {
+                file,
+                path: `/IMAGENES/${encodeURIComponent(file)}`,
+                normalized,
+                productCode: productPrefix ? productPrefix[1] : null,
+                tokens: new Set(normalized.split(' ').filter(Boolean))
+            };
+        });
 }
 
 function normalizeText(value) {
@@ -2524,11 +2530,23 @@ function inferBrand(name) {
 }
 
 function findImageForProduct(row) {
+    const exactCodes = [row.articulo_codigo, row.codigo_usr, row.referencia, row.codigo]
+        .map(normalizeText)
+        .filter(value => value && value !== '0');
+
+    // Las imágenes importadas siguen el patrón producto-<articulo_codigo>-nombre.
+    // Se compara el prefijo como campo independiente para evitar confundir el
+    // código con números incluidos en el nombre o en la marca de tiempo.
+    for (const candidate of exactCodes) {
+        const found = imageIndex.find(image => image.productCode === candidate);
+        if (found) return found.path;
+    }
+
     const modelTokens = normalizeText(row.nombre)
         .split(' ')
         .filter(token => token.length >= 4 && /[A-Z]/.test(token) && /[0-9]/.test(token));
 
-    const directCandidates = [row.articulo_codigo, ...modelTokens]
+    const directCandidates = [row.codigo_usr, row.referencia, ...modelTokens]
         .map(normalizeText)
         .filter(value => value && value !== '0')
         .filter(value => value.length >= 4 || (/[A-Z]/.test(value) && /[0-9]/.test(value) && value.length >= 3));
@@ -2552,6 +2570,26 @@ function findImageForProduct(row) {
     }
 
     return best ? best.image.path : '/IMAGENES/producto-sin-imagen.svg';
+}
+
+function normalizeProductImagePath(value) {
+    const image = String(value || '').trim();
+    if (!image) return '';
+    if (/^(?:https?:|data:)/i.test(image)) return image;
+
+    const normalized = image.replace(/\\/g, '/');
+    const marker = '/IMAGENES/';
+    const markerIndex = normalized.toUpperCase().indexOf(marker);
+    if (markerIndex === -1) return normalized.startsWith('/') ? normalized : `/${normalized}`;
+
+    const filename = normalized.slice(markerIndex + marker.length);
+    let decodedFilename = filename;
+    try {
+        decodedFilename = decodeURIComponent(filename);
+    } catch (error) {
+        // Conserva el nombre original si contiene un porcentaje literal.
+    }
+    return `/IMAGENES/${encodeURIComponent(path.basename(decodedFilename))}`;
 }
 
 function getArticuloCode(row) {
@@ -2618,7 +2656,7 @@ function normalizeProduct(row, includeAdminPrices = false) {
         hasWarranty: toNumber(row.garantia) > 0,
         stock,
         existence: stock,
-        image: row.imagen_url || '/IMAGENES/producto-sin-imagen.svg',
+        image: normalizeProductImagePath(row.imagen_url) || findImageForProduct(row),
         specs,
         shortSpecs: specs.slice(0, 4),
         features: [

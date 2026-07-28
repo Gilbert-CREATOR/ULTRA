@@ -620,6 +620,7 @@
 
                             const imageWrapper = document.createElement('div');
                             imageWrapper.className = 'product-image';
+
                             imageWrapper.appendChild(createProductImage(product));
 
                             const productInfo = document.createElement('div');
@@ -630,7 +631,7 @@
 
                             const description = document.createElement('p');
                             description.className = 'product-description';
-                            description.textContent = (product.shortSpecs || product.specs).slice(0, 3).join(', ');
+                            description.textContent = (product.shortSpecs || product.specs || []).slice(0, 3).join(', ');
 
                             const price = document.createElement('div');
                             price.className = 'product-price';

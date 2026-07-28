@@ -245,9 +245,14 @@
             imageWrapper.className = 'catalog-card-image';
 
             const image = document.createElement('img');
-            image.src = product.image;
+            image.src = product.image || '/IMAGENES/producto-sin-imagen.svg';
             image.alt = product.name;
             image.loading = 'lazy';
+            image.addEventListener('error', () => {
+                if (!image.src.endsWith('/IMAGENES/producto-sin-imagen.svg')) {
+                    image.src = '/IMAGENES/producto-sin-imagen.svg';
+                }
+            }, { once: true });
 
             imageWrapper.appendChild(image);
 

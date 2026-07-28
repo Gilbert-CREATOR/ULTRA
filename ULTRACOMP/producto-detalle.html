@@ -166,8 +166,13 @@
             document.getElementById('productCodeLabel').textContent = `Código artículo ${getArticuloCode(product)}`;
             document.getElementById('productDescription').textContent = product.description;
             document.getElementById('productPrice').textContent = product.price;
-            document.getElementById('productImage').src = product.image;
-            document.getElementById('productImage').alt = product.name;
+            const productImage = document.getElementById('productImage');
+            productImage.src = product.image || '/IMAGENES/producto-sin-imagen.svg';
+            productImage.alt = product.name;
+            productImage.onerror = () => {
+                productImage.onerror = null;
+                productImage.src = '/IMAGENES/producto-sin-imagen.svg';
+            };
             const stock = Math.max(0, Number(product.stock ?? product.existence ?? 0));
             document.getElementById('productAvailability').textContent = stock > 0
                 ? `${stock} unidad${stock === 1 ? '' : 'es'}`
