@@ -1,6 +1,5 @@
 // Interactive functionality for Ultrasoft
 
-const CONTACT_EMAIL = 'ultrasoftsolicitud@gmail.com';
 let CONTACT_WHATSAPP = '8095726552';
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -116,7 +115,8 @@ async function handleSubmit(event) {
         email: data.email || '',
         phone: data.phone || '',
         service: data.service || '',
-        message: data.message || ''
+        message: data.message || '',
+        website: data.website || ''
     };
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton ? submitButton.textContent : '';
@@ -150,66 +150,6 @@ async function handleSubmit(event) {
         }
     }
     return false;
-}
-
-function copyToClipboard(data) {
-    const text = `
-TO: ${CONTACT_EMAIL}
-SUBJECT: Solicitud de contacto de ${data.from_name}
-
-Nueva solicitud de contacto desde el sitio web de Ultrasoft:
-
-Name: ${data.from_name}
-Email: ${data.email}
-Phone: ${data.phone}
-Service: ${data.service}
-
-Message:
-${data.message}
-
----
-Request sent on: ${new Date().toLocaleString()}
-    `.trim();
-    
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text);
-    } else {
-        // Fallback for older browsers
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-    }
-}
-
-function formatContactMessage(data) {
-    return `
-Nueva solicitud desde el sitio web de Ultrasoft:
-
-Nombre: ${data.from_name}
-Email: ${data.email}
-Telefono: ${data.phone}
-Servicio: ${data.service}
-
-Mensaje:
-${data.message}
-
-Fecha: ${new Date(data.timestamp).toLocaleString()}
-    `.trim();
-}
-
-function saveToLocalStorage(data) {
-    // Save to localStorage as backup
-    const requests = JSON.parse(localStorage.getItem('ultrasoftRequests') || '[]');
-    requests.push({
-        ...data,
-        timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('ultrasoftRequests', JSON.stringify(requests));
-    
-    console.log('Request saved to localStorage:', data);
 }
 
 function showNotification(message) {
@@ -422,51 +362,6 @@ window.addEventListener('load', function() {
     document.body.classList.add('loaded');
 });
 
-// Function to view all contact requests (for admin)
-function viewContactRequests() {
-    const requests = JSON.parse(localStorage.getItem('ultrasoftRequests') || '[]');
-    
-    if (requests.length === 0) {
-        showNotification('No contact requests found.');
-        return;
-    }
-    
-    console.log('=== ALL CONTACT REQUESTS ===');
-    requests.forEach((request, index) => {
-        console.log(`\nRequest #${index + 1}:`);
-        console.log('Name:', request.from_name);
-        console.log('Email:', request.email);
-        console.log('Phone:', request.phone);
-        console.log('Service:', request.service);
-        console.log('Message:', request.message);
-        console.log('Date:', new Date(request.timestamp).toLocaleString());
-        console.log('---');
-    });
-    
-    showNotification(`Found ${requests.length} contact request(s). Check console for details.`);
-}
-
-// Function to clear all requests (for admin)
-function clearContactRequests() {
-    if (confirm('Are you sure you want to clear all contact requests?')) {
-        localStorage.removeItem('ultrasoftRequests');
-        showNotification('All contact requests cleared.');
-    }
-}
-
-// Add keyboard shortcuts for admin
-document.addEventListener('keydown', function(e) {
-    // Ctrl+Shift+V to view requests
-    if (e.ctrlKey && e.shiftKey && e.key === 'V') {
-        e.preventDefault();
-        viewContactRequests();
-    }
-    // Ctrl+Shift+C to clear requests
-    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-        e.preventDefault();
-        clearContactRequests();
-    }
-});
 
 // Banner Carousel Functionality
 let currentBannerIndex = 0;

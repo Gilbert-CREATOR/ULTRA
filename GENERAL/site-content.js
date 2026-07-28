@@ -5,6 +5,12 @@
         return result;
     }
 
+    function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, character => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[character]);
+    }
+
     try {
         const response = await fetch('/api/content');
         if (!response.ok) return;
@@ -55,7 +61,7 @@
             if (grid && Array.isArray(data.benefits)) {
                 grid.innerHTML = data.benefits.map(value => {
                     const [icon, title, description] = parts(value, 3);
-                    return `<div class="service-card"><div class="service-icon">${icon}</div><div><strong>${title}</strong><div>${description}</div></div></div>`;
+                    return `<div class="service-card"><div class="service-icon">${escapeHtml(icon)}</div><div><strong>${escapeHtml(title)}</strong><div>${escapeHtml(description)}</div></div></div>`;
                 }).join('');
             }
         }
@@ -65,17 +71,17 @@
             if (Array.isArray(data.challenges)) {
                 document.querySelector('.challenge-grid').innerHTML = data.challenges.map(value => {
                     const [icon, title, description] = parts(value, 3);
-                    return `<article class="challenge-card"><div class="icon">${icon}</div><h3>${title}</h3><p>${description}</p></article>`;
+                    return `<article class="challenge-card"><div class="icon">${escapeHtml(icon)}</div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(description)}</p></article>`;
                 }).join('');
             }
             if (Array.isArray(data.workflow)) {
                 document.querySelector('.timeline-grid').innerHTML = data.workflow.map((value, index) => {
                     const [title, description] = parts(value, 2);
-                    return `<div class="timeline-step"><span>${index + 1}</span><h3>${title}</h3><p>${description}</p></div>`;
+                    return `<div class="timeline-step"><span>${index + 1}</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(description)}</p></div>`;
                 }).join('');
             }
             if (Array.isArray(data.advantages)) {
-                document.querySelector('.advantages-grid').innerHTML = data.advantages.map(value => `<div class="advantage-card">✓ ${value}</div>`).join('');
+                document.querySelector('.advantages-grid').innerHTML = data.advantages.map(value => `<div class="advantage-card">✓ ${escapeHtml(value)}</div>`).join('');
             }
         }
     } catch (error) {

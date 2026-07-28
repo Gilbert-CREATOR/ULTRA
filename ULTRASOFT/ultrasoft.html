@@ -211,6 +211,10 @@
             <button class="close" type="button" onclick="closeForm()" aria-label="Cerrar formulario">&times;</button>
             <h2 id="interestFormTitle">Contáctanos</h2>
             <form onsubmit="handleSubmit(event)">
+                <div class="form-honeypot" aria-hidden="true">
+                    <label for="website">Sitio web:</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
                 <label for="name">Nombre:</label>
                 <input type="text" id="name" name="name" required placeholder="Tu nombre">
 
@@ -278,7 +282,8 @@
                 if (ultrasoft && Array.isArray(ultrasoft.servicios) && ultrasoft.servicios.length) {
                     const highlights = document.querySelector('.hero-highlights');
                     if (highlights) {
-                        highlights.innerHTML = ultrasoft.servicios.slice(0, 4).map(item => `<span>✓ ${item}</span>`).join('');
+                        highlights.innerHTML = ultrasoft.servicios.slice(0, 4)
+                            .map(item => `<span>✓ ${escapeAdminText(item)}</span>`).join('');
                     }
                 }
 
@@ -288,7 +293,7 @@
                         solutionGrid.innerHTML = ultrasoft.soluciones.map(item => `
                             <article class="solution-card">
                                 <div class="solution-icon">✓</div>
-                                <h3>${item}</h3>
+                                <h3>${escapeAdminText(item)}</h3>
                                 <p>Solución tecnológica configurable desde el panel administrativo para responder a las necesidades de tu empresa.</p>
                                 <a href="#contact" class="text-link">Solicitar servicio</a>
                             </article>

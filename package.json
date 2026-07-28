@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "node server.js",
     "check": "node --check server.js && node --check admin/admin.js && node --check admin/products-mysql-admin.js && node --check admin/taxonomy-admin.js && node --check GENERAL/scroll-testimonials.js && node --check GENERAL/site-content.js && node --check ULTRASOFT/ultrasoft.js",
+    "test": "node scripts/self-test.js",
     "smoke": "node scripts/smoke-test.js",
+    "audit-images": "node scripts/audit-images.js",
     "classify-products": "node scripts/classify-in-stock-products.js"
   },
   "keywords": [],

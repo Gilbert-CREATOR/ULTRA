@@ -51,6 +51,8 @@ const memoryStore = {
 const adminSessions = new Map();
 const contactAttempts = new Map();
 const loginAttempts = new Map();
+const quoteAttempts = new Map();
+const quoteCartAttempts = new Map();
 let mailTransporter = null;
 
 function ensureUploadDir() {
@@ -572,8 +574,11 @@ function securityHeaders() {
     const headers = {
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'SAMEORIGIN',
+        'X-Permitted-Cross-Domain-Policies': 'none',
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Resource-Policy': 'same-origin',
         'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self' data: https://images.simplycodes.com; frame-ancestors 'self'"
     };
     if (process.env.NODE_ENV === 'production') {
@@ -595,14 +600,25 @@ function hasValidRequestOrigin(req) {
 function readBody(req, maxBytes = 2_000_000) {
     return new Promise((resolve, reject) => {
         let body = '';
+        let receivedBytes = 0;
+        let tooLarge = false;
         req.on('data', chunk => {
-            body += chunk;
-            if (body.length > maxBytes) {
-                req.destroy();
-                reject(new Error('Body too large'));
+            receivedBytes += chunk.length;
+            if (tooLarge) return;
+            if (receivedBytes > maxBytes) {
+                tooLarge = true;
+                body = '';
+                return;
             }
+            body += chunk;
         });
         req.on('end', () => {
+            if (tooLarge) {
+                const error = new Error('La solicitud es demasiado grande');
+                error.statusCode = 413;
+                reject(error);
+                return;
+            }
             if (!body) {
                 resolve({});
                 return;
@@ -610,6 +626,7 @@ function readBody(req, maxBytes = 2_000_000) {
             try {
                 resolve(JSON.parse(body));
             } catch (error) {
+                error.statusCode = 400;
                 reject(error);
             }
         });
@@ -662,15 +679,30 @@ function getMailTransporter() {
     return mailTransporter;
 }
 
-function isContactRateLimited(req) {
-    const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-    const client = forwarded || req.socket.remoteAddress || 'unknown';
+function getClientAddress(req) {
+    const trustProxy = String(process.env.TRUST_PROXY || process.env.NODE_ENV === 'production').toLowerCase() === 'true';
+    if (trustProxy) {
+        const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+        if (forwarded) return forwarded.slice(0, 100);
+    }
+    return String(req.socket.remoteAddress || 'unknown').slice(0, 100);
+}
+
+function isRequestRateLimited(store, req, limit, windowMs) {
+    const client = getClientAddress(req);
     const now = Date.now();
-    const windowMs = 15 * 60 * 1000;
-    const recent = (contactAttempts.get(client) || []).filter(timestamp => now - timestamp < windowMs);
+    const recent = (store.get(client) || []).filter(timestamp => now - timestamp < windowMs);
     recent.push(now);
-    contactAttempts.set(client, recent);
-    return recent.length > 5;
+    store.set(client, recent);
+
+    // Evita crecimiento indefinido de los mapas en procesos de larga duración.
+    if (store.size > 5000) {
+        for (const [key, timestamps] of store) {
+            if (!timestamps.some(timestamp => now - timestamp < windowMs)) store.delete(key);
+            if (store.size <= 4000) break;
+        }
+    }
+    return recent.length > limit;
 }
 
 function cleanContactField(value, maxLength) {
@@ -876,12 +908,17 @@ async function handleApi(req, res, url) {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/contact') {
-        if (isContactRateLimited(req)) {
+        if (isRequestRateLimited(contactAttempts, req, 5, 15 * 60 * 1000)) {
             sendJson(res, 429, { message: 'Has enviado demasiadas solicitudes. Inténtalo nuevamente en unos minutos.' });
             return true;
         }
 
         const body = await readBody(req);
+        if (String(body.website || '').trim()) {
+            // Honeypot: se responde normalmente para no enseñar al bot cómo fue detectado.
+            sendJson(res, 202, { ok: true });
+            return true;
+        }
         const contact = {
             name: cleanContactField(body.name, 120),
             email: cleanContactField(body.email, 254),
@@ -900,7 +937,7 @@ async function handleApi(req, res, url) {
             `INSERT INTO web_contact_requests
              (name, email, phone, service, message, status, source_ip)
              VALUES (?, ?, ?, ?, ?, 'pendiente', ?)`,
-            [contact.name, contact.email, contact.phone, contact.service, contact.message, req.socket.remoteAddress || '']
+            [contact.name, contact.email, contact.phone, contact.service, contact.message, getClientAddress(req)]
         );
         const transporter = getMailTransporter();
         if (!transporter) {
@@ -1627,6 +1664,10 @@ async function handleApi(req, res, url) {
 
     // POST /api/quotes - Guardar cotización desde el frontend público
     if (req.method === 'POST' && url.pathname === '/api/quotes') {
+        if (isRequestRateLimited(quoteAttempts, req, 10, 15 * 60 * 1000)) {
+            sendJson(res, 429, { message: 'Has enviado demasiadas cotizaciones. Inténtalo nuevamente en unos minutos.' });
+            return true;
+        }
         if (!productDbReady) {
             sendJson(res, 503, { message: 'Base de datos MySQL no disponible' });
             return true;
@@ -1982,13 +2023,23 @@ async function handleApi(req, res, url) {
     }
 
     if (req.method === 'POST' && url.pathname === '/api/quote-carts') {
-        const body = await readBody(req);
+        if (isRequestRateLimited(quoteCartAttempts, req, 20, 15 * 60 * 1000)) {
+            sendJson(res, 429, { message: 'Demasiadas actualizaciones del carrito. Inténtalo nuevamente en unos minutos.' });
+            return true;
+        }
+        const body = await readBody(req, 250_000);
+        const products = Array.isArray(body.products) ? body.products.slice(0, 50) : [];
+        const totalItems = products.reduce((total, product) => {
+            const quantity = Math.min(99, Math.max(0, Number(product && product.quantity) || 0));
+            return total + quantity;
+        }, 0);
+        const status = ['Pendiente', 'En proceso', 'Completada'].includes(body.status) ? body.status : 'Pendiente';
         if (!dbReady) {
             memoryStore.quoteCarts.unshift({
                 id: Date.now(),
-                products: body.products || [],
-                totalItems: body.totalItems || 0,
-                status: body.status || 'Pendiente',
+                products,
+                totalItems,
+                status,
                 timestamp: new Date().toISOString()
             });
             sendJson(res, 201, { ok: true });
@@ -1996,7 +2047,7 @@ async function handleApi(req, res, url) {
         }
         await mysqlPool.query(
             'INSERT INTO web_quote_carts (products, total_items, status) VALUES (?, ?, ?)',
-            [JSON.stringify(body.products || []), body.totalItems || 0, body.status || 'Pendiente']
+            [JSON.stringify(products), totalItems, status]
         );
         sendJson(res, 201, { ok: true });
         return true;
@@ -3264,7 +3315,7 @@ function validateQuoteRequest(quoteData) {
     }
     if (clientMessage && clientMessage.length > 2000) invalid('El mensaje es demasiado largo');
     if (!Array.isArray(data.items) || data.items.length === 0) invalid('La cotización debe tener al menos un producto');
-    if (data.items.length > 100) invalid('La cotización supera el máximo de 100 productos');
+    if (data.items.length > 50) invalid('La cotización supera el máximo de 50 productos');
 
     const items = data.items.map(item => {
         const productCodigo = String(item?.productCodigo || item?.productId || '').trim();
@@ -3273,9 +3324,12 @@ function validateQuoteRequest(quoteData) {
         if (!productCodigo || productCodigo.length > 120 || !productCode || productCode.length > 120) {
             invalid('Todos los productos deben tener un código válido');
         }
-        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 999) invalid('La cantidad de cada producto debe estar entre 1 y 999');
+        if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) invalid('La cantidad de cada producto debe estar entre 1 y 99');
         return { productCodigo, productCode, quantity };
     });
+
+    const totalUnits = items.reduce((total, item) => total + item.quantity, 0);
+    if (totalUnits > 500) invalid('La cotización supera el máximo de 500 unidades');
 
     return { clientName, clientPhone, clientEmail, clientMessage, items };
 }
@@ -3956,7 +4010,9 @@ async function requestHandler(req, res) {
         serveStatic(req, res, url);
     } catch (error) {
         console.error(error);
-        sendJson(res, 500, { message: 'Error interno del servidor' });
+        sendJson(res, error.statusCode || 500, {
+            message: error.statusCode ? error.message : 'Error interno del servidor'
+        });
     }
 }
 
@@ -3997,3 +4053,8 @@ if (require.main === module) {
 
 module.exports = requestHandler;
 module.exports.server = server;
+module.exports._test = {
+    cleanContactField,
+    normalizeProductImagePath,
+    validateQuoteRequest
+};
