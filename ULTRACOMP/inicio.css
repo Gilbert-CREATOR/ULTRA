@@ -2,6 +2,90 @@
     background: #f7f7f7;
 }
 
+/* Proceso de trabajo: tarjetas independientes, sin línea ni conectores heredados. */
+.ultracomp-home .timeline-section .timeline {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+.ultracomp-home .timeline-section .timeline::after,
+.ultracomp-home .timeline-section .timeline-item::after {
+    display: none !important;
+}
+
+.ultracomp-home .timeline-section .timeline-item {
+    position: static !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+.ultracomp-home .timeline-section .timeline-content {
+    display: flex !important;
+    min-height: 230px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 24px !important;
+    border: 1px solid #dfe6f8;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(14,57,176,.07);
+}
+
+.ultracomp-home .timeline-section .timeline-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: #edf2ff;
+    font-size: 24px;
+}
+
+.ultracomp-home .timeline-section .timeline-content .year {
+    margin: 0 !important;
+    color: #0e39b0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.ultracomp-home .timeline-section .timeline-content h3 {
+    margin: 0 !important;
+    color: #111827;
+    font-size: 22px;
+}
+
+.ultracomp-home .timeline-section .timeline-content p {
+    margin: 0 !important;
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+    .ultracomp-home .timeline-section .timeline {
+        display: flex !important;
+        padding: 2px 2px 12px !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+    }
+
+    .ultracomp-home .timeline-section .timeline-item {
+        min-width: min(78vw, 330px) !important;
+        scroll-snap-align: start;
+    }
+}
+
 .ultracomp-home header {
     position: sticky;
     z-index: 50;

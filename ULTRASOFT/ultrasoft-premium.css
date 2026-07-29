@@ -8,6 +8,59 @@
     --us-line: #d9dcda;
 }
 
+/* Iconos y proceso: una señal visual clara por tarjeta, sin conectores. */
+.ultrasoft-page .timeline-grid {
+    align-items: stretch;
+}
+
+.ultrasoft-page .timeline-step {
+    display: flex;
+    min-height: 300px;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ultrasoft-page .timeline-step > span {
+    display: none;
+}
+
+.ultrasoft-page .timeline-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ultrasoft-page .timeline-badge > span {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 14px;
+    background: #e8edff;
+    font-size: 24px;
+}
+
+.ultrasoft-page .timeline-badge small {
+    color: var(--us-blue);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+}
+
+.ultrasoft-page .timeline-step h3 {
+    margin: 12px 0 0;
+}
+
+.ultrasoft-page .advantage-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ultrasoft-page .advantage-card > span {
+    font-size: 18px;
+}
+
 body {
     overflow-x: hidden;
     color: var(--us-ink);
@@ -962,5 +1015,32 @@ body {
     .faq-question {
         padding: 18px 16px;
         font-size: 16px;
+    }
+}
+
+/* Se mantiene al final para prevalecer sobre las reglas de escritorio y móvil. */
+.ultrasoft-page .timeline-grid {
+    align-items: stretch !important;
+}
+
+.ultrasoft-page .timeline-step {
+    display: flex !important;
+    min-height: 300px !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 24px !important;
+}
+
+.ultrasoft-page .timeline-step h3 {
+    margin: 12px 0 0 !important;
+}
+
+.ultrasoft-page .timeline-step p {
+    margin: 0 !important;
+}
+
+@media (max-width: 760px) {
+    .ultrasoft-page .timeline-step {
+        min-height: 250px !important;
     }
 }

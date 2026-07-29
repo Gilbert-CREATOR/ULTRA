@@ -31,7 +31,7 @@
     }
     </script>
     <link rel="stylesheet" href="/ULTRASOFT/ultrasoft.css?v=20260708-fix-layout">
-    <link rel="stylesheet" href="/ULTRASOFT/ultrasoft-premium.css?v=20260708-fix-layout">
+    <link rel="stylesheet" href="/ULTRASOFT/ultrasoft-premium.css?v=20260729-process-icons">
     <link rel="stylesheet" href="/GENERAL/scroll-testimonials.css?v=20260708-fix-layout">
     <link rel="stylesheet" href="/GENERAL/ultra-intro.css?v=20260720-mobile-intro-fit">
     <script defer src="/GENERAL/ultra-intro.js?v=20260720-mobile-intro-fit"></script>
@@ -132,13 +132,13 @@
                     <p>Un camino claro para desarrollar soluciones confiables y efectivas.</p>
                 </div>
                 <div class="timeline-grid">
-                    <div class="timeline-step"><span>1</span><h3>Reunión Inicial</h3><p>Escuchamos tu negocio y definimos objetivos estratégicos.</p></div>
-                    <div class="timeline-step"><span>2</span><h3>Análisis</h3><p>Mapeamos procesos, identificamos oportunidades y evaluamos requerimientos.</p></div>
-                    <div class="timeline-step"><span>3</span><h3>Diseño</h3><p>Generamos prototipos visuales y experiencia de usuario efectiva.</p></div>
-                    <div class="timeline-step"><span>4</span><h3>Desarrollo</h3><p>Implementamos la solución con calidad, seguridad y rendimiento.</p></div>
-                    <div class="timeline-step"><span>5</span><h3>Pruebas</h3><p>Verificamos cada función para garantizar un lanzamiento sin fallos.</p></div>
-                    <div class="timeline-step"><span>6</span><h3>Implementación</h3><p>Desplegamos la solución y acompañamos la adopción del equipo.</p></div>
-                    <div class="timeline-step"><span>7</span><h3>Soporte</h3><p>Ofrecemos mantenimiento continuo y mejoras a medida.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🤝</span><small>01</small></div><h3>Reunión Inicial</h3><p>Escuchamos tu negocio y definimos objetivos estratégicos.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🔎</span><small>02</small></div><h3>Análisis</h3><p>Mapeamos procesos, identificamos oportunidades y evaluamos requerimientos.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🎨</span><small>03</small></div><h3>Diseño</h3><p>Generamos prototipos visuales y experiencia de usuario efectiva.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">💻</span><small>04</small></div><h3>Desarrollo</h3><p>Implementamos la solución con calidad, seguridad y rendimiento.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🧪</span><small>05</small></div><h3>Pruebas</h3><p>Verificamos cada función para garantizar un lanzamiento sin fallos.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🚀</span><small>06</small></div><h3>Implementación</h3><p>Desplegamos la solución y acompañamos la adopción del equipo.</p></div>
+                    <div class="timeline-step"><div class="timeline-badge"><span aria-hidden="true">🛟</span><small>07</small></div><h3>Soporte</h3><p>Ofrecemos mantenimiento continuo y mejoras a medida.</p></div>
                 </div>
             </div>
         </section>
@@ -150,12 +150,12 @@
                     <h2>Por qué elegirnos</h2>
                 </div>
                 <div class="advantages-grid">
-                    <div class="advantage-card">✓ Soluciones a medida</div>
-                    <div class="advantage-card">✓ Tecnología moderna</div>
-                    <div class="advantage-card">✓ Escalabilidad</div>
-                    <div class="advantage-card">✓ Soporte continuo</div>
-                    <div class="advantage-card">✓ Seguridad</div>
-                    <div class="advantage-card">✓ Experiencia empresarial</div>
+                    <div class="advantage-card"><span aria-hidden="true">🧩</span>Soluciones a medida</div>
+                    <div class="advantage-card"><span aria-hidden="true">💡</span>Tecnología moderna</div>
+                    <div class="advantage-card"><span aria-hidden="true">📈</span>Escalabilidad</div>
+                    <div class="advantage-card"><span aria-hidden="true">🛟</span>Soporte continuo</div>
+                    <div class="advantage-card"><span aria-hidden="true">🔒</span>Seguridad</div>
+                    <div class="advantage-card"><span aria-hidden="true">🏢</span>Experiencia empresarial</div>
                 </div>
             </div>
         </section>
@@ -259,7 +259,7 @@
 
     <script src="./ultrasoft.js"></script>
     <script src="/GENERAL/scroll-testimonials.js?v=20260708-fix-layout"></script>
-    <script src="/GENERAL/site-content.js?v=20260708-fix-layout"></script>
+    <script src="/GENERAL/site-content.js?v=20260729-icons"></script>
     <script>
         async function applyAdminContent() {
             try {
@@ -282,17 +282,19 @@
                 if (ultrasoft && Array.isArray(ultrasoft.servicios) && ultrasoft.servicios.length) {
                     const highlights = document.querySelector('.hero-highlights');
                     if (highlights) {
+                        const serviceIcons = ['💻', '🌐', '📱', '🤖'];
                         highlights.innerHTML = ultrasoft.servicios.slice(0, 4)
-                            .map(item => `<span>✓ ${escapeAdminText(item)}</span>`).join('');
+                            .map((item, index) => `<span>${serviceIcons[index]} ${escapeAdminText(item)}</span>`).join('');
                     }
                 }
 
                 if (ultrasoft && Array.isArray(ultrasoft.soluciones) && ultrasoft.soluciones.length) {
                     const solutionGrid = document.querySelector('.solution-grid');
                     if (solutionGrid) {
-                        solutionGrid.innerHTML = ultrasoft.soluciones.map(item => `
+                        const solutionIcons = ['🧩', '📈', '📦', '💳', '👥', '🧾'];
+                        solutionGrid.innerHTML = ultrasoft.soluciones.map((item, index) => `
                             <article class="solution-card">
-                                <div class="solution-icon">✓</div>
+                                <div class="solution-icon" aria-hidden="true">${solutionIcons[index % solutionIcons.length]}</div>
                                 <h3>${escapeAdminText(item)}</h3>
                                 <p>Solución tecnológica configurable desde el panel administrativo para responder a las necesidades de tu empresa.</p>
                                 <a href="#contact" class="text-link">Solicitar servicio</a>
