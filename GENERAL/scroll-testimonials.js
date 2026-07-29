@@ -1,22 +1,21 @@
 (async function () {
-    // SVG de persona uniforme — se usa en todos los avatares
-    const AVATAR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false" style="width:28px;height:28px;display:block">
-        <circle cx="16" cy="11" r="6" fill="currentColor" opacity=".9"/>
-        <path d="M4 27c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".85"/>
-    </svg>`;
+    const AVATARS = {
+        ultracomp: ['👨🏽‍💼', '👩🏻‍💻', '🧑🏾‍🎮', '👩🏽‍🏫'],
+        ultrasoft: ['👨🏻‍💼', '👩🏾‍🔬', '🧑🏻‍🚀', '👩🏼‍💼']
+    };
 
     let TESTIMONIALS = {
         ultracomp: [
-            { id: 1, name: 'Juan Pérez', role: 'Gerente de operaciones', company: 'Empresa comercial', avatar: AVATAR_SVG, rating: 5, reviewText: 'Ultracomp entendió exactamente lo que necesitábamos. Recibimos equipos confiables, configurados y listos para trabajar desde el primer día.', featured: true },
-            { id: 2, name: 'María Rodríguez', role: 'Emprendedora', company: 'Negocio independiente', avatar: AVATAR_SVG, rating: 5, reviewText: 'La asesoría hizo toda la diferencia. Me ayudaron a elegir la computadora correcta sin venderme cosas que realmente no necesitaba.', featured: true },
-            { id: 3, name: 'Carlos Gómez', role: 'Creador de contenido', company: 'Estudio creativo', avatar: AVATAR_SVG, rating: 4.9, reviewText: 'Mi equipo para gaming y edición quedó excelente. El rendimiento, la atención y el seguimiento después de la compra fueron impecables.', featured: false },
-            { id: 4, name: 'Laura Méndez', role: 'Coordinadora académica', company: 'Centro educativo', avatar: AVATAR_SVG, rating: 5, reviewText: 'Equipamos nuestro laboratorio con el acompañamiento de Ultracomp. Todo llegó organizado y el soporte ha sido rápido cuando lo necesitamos.', featured: true }
+            { id: 1, name: 'Juan Pérez', role: 'Gerente de operaciones', company: 'Empresa comercial', avatar: '👨🏽‍💼', rating: 5, reviewText: 'Ultracomp entendió exactamente lo que necesitábamos. Recibimos equipos confiables, configurados y listos para trabajar desde el primer día.', featured: true },
+            { id: 2, name: 'María Rodríguez', role: 'Emprendedora', company: 'Negocio independiente', avatar: '👩🏻‍💻', rating: 5, reviewText: 'La asesoría hizo toda la diferencia. Me ayudaron a elegir la computadora correcta sin venderme cosas que realmente no necesitaba.', featured: true },
+            { id: 3, name: 'Carlos Gómez', role: 'Creador de contenido', company: 'Estudio creativo', avatar: '🧑🏾‍🎮', rating: 4.9, reviewText: 'Mi equipo para gaming y edición quedó excelente. El rendimiento, la atención y el seguimiento después de la compra fueron impecables.', featured: false },
+            { id: 4, name: 'Laura Méndez', role: 'Coordinadora académica', company: 'Centro educativo', avatar: '👩🏽‍🏫', rating: 5, reviewText: 'Equipamos nuestro laboratorio con el acompañamiento de Ultracomp. Todo llegó organizado y el soporte ha sido rápido cuando lo necesitamos.', featured: true }
         ],
         ultrasoft: [
-            { id: 1, name: 'Andrés Castillo', role: 'Director comercial', company: 'Distribuidora regional', avatar: AVATAR_SVG, rating: 5, reviewText: 'Pasamos de reportes manuales a información centralizada en tiempo real. Ahora el equipo decide más rápido y con datos confiables.', featured: true },
-            { id: 2, name: 'Paola Jiménez', role: 'Líder de procesos', company: 'Servicios empresariales', avatar: AVATAR_SVG, rating: 4.9, reviewText: 'Ultrasoft convirtió un proceso lento y repetitivo en un flujo simple. La implementación fue clara y el equipo siempre estuvo disponible.', featured: true },
-            { id: 3, name: 'Miguel Santos', role: 'Fundador', company: 'Startup tecnológica', avatar: AVATAR_SVG, rating: 5, reviewText: 'Construimos nuestra primera versión en menos tiempo del esperado. El producto se siente sólido, moderno y preparado para crecer.', featured: true },
-            { id: 4, name: 'Sofía Valdez', role: 'Gerente administrativa', company: 'Grupo empresarial', avatar: AVATAR_SVG, rating: 5, reviewText: 'La nueva plataforma nos dio control sobre inventario, ventas y cuentas. Hoy tenemos una operación mucho más ordenada y medible.', featured: false }
+            { id: 1, name: 'Andrés Castillo', role: 'Director comercial', company: 'Distribuidora regional', avatar: '👨🏻‍💼', rating: 5, reviewText: 'Pasamos de reportes manuales a información centralizada en tiempo real. Ahora el equipo decide más rápido y con datos confiables.', featured: true },
+            { id: 2, name: 'Paola Jiménez', role: 'Líder de procesos', company: 'Servicios empresariales', avatar: '👩🏾‍🔬', rating: 4.9, reviewText: 'Ultrasoft convirtió un proceso lento y repetitivo en un flujo simple. La implementación fue clara y el equipo siempre estuvo disponible.', featured: true },
+            { id: 3, name: 'Miguel Santos', role: 'Fundador', company: 'Startup tecnológica', avatar: '🧑🏻‍🚀', rating: 5, reviewText: 'Construimos nuestra primera versión en menos tiempo del esperado. El producto se siente sólido, moderno y preparado para crecer.', featured: true },
+            { id: 4, name: 'Sofía Valdez', role: 'Gerente administrativa', company: 'Grupo empresarial', avatar: '👩🏼‍💼', rating: 5, reviewText: 'La nueva plataforma nos dio control sobre inventario, ventas y cuentas. Hoy tenemos una operación mucho más ordenada y medible.', featured: false }
         ]
     };
 
@@ -51,6 +50,11 @@
         }
     } catch (error) {
         console.warn('No se pudieron cargar los testimonios administrables:', error.message);
+    }
+
+    function emojiAvatar(value, brand, index) {
+        const match = String(value || '').match(/\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic})*/u);
+        return match ? match[0] : AVATARS[brand][index % AVATARS[brand].length];
     }
 
     function stars(rating) {
@@ -100,6 +104,9 @@
     function init(section) {
         const brand = section.dataset.testimonialBrand || (section.classList.contains('scroll-testimonials-ultrasoft') ? 'ultrasoft' : 'ultracomp');
         const testimonials = TESTIMONIALS[brand];
+        testimonials.forEach((item, index) => {
+            item.avatar = emojiAvatar(item.avatar, brand, index);
+        });
         createMarkup(section, brand);
 
         const users = section.querySelector('.scroll-testimonial-users');

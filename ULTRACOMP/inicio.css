@@ -2,6 +2,44 @@
     background: #f7f7f7;
 }
 
+/* Últimos overrides: eliminan etiquetas heredadas y garantizan contenido visible. */
+.ultracomp-home .timeline-section .timeline-content .year {
+    display: none !important;
+}
+
+.ultracomp-home .stats .stat-item {
+    display: flex !important;
+    min-height: 150px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.ultracomp-home .stats .stat-icon {
+    display: block !important;
+    font-size: 26px !important;
+    line-height: 1 !important;
+}
+
+.ultracomp-home .stats .stat-item h2,
+.ultracomp-home .stats .stat-item p {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: currentColor !important;
+}
+
+.ultracomp-home .stats .stat-item h2 {
+    margin: 0 !important;
+    color: #fff !important;
+}
+
+.ultracomp-home .stats .stat-item p {
+    margin: 0 !important;
+    color: rgba(255,255,255,.78) !important;
+}
+
 /* Proceso de trabajo: tarjetas independientes, sin línea ni conectores heredados. */
 .ultracomp-home .timeline-section .timeline {
     display: grid !important;

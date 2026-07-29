@@ -137,7 +137,8 @@ body:not(.ultracomp-home) .scroll-testimonials-sticky,
     border-radius: 50%;
     background: rgba(255,255,255,.18);
     color: #fff;
-    font-size: 0;
+    font-size: 28px;
+    line-height: 1;
 }
 
 .testimonial-user-copy {
