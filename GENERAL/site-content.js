@@ -86,8 +86,9 @@
                 document.querySelector('.challenge-grid').innerHTML = data.challenges.map((value, index) => {
                     const [icon, title, description] = parts(value, 3);
                     const hasIcon = Boolean(icon.match(/\p{Extended_Pictographic}/u));
-                    const cardTitle = hasIcon ? title : icon;
-                    const cardDescription = hasIcon ? description : title;
+                    const hasSeparateDescription = String(value || '').split('|').length >= 3;
+                    const cardTitle = hasIcon || hasSeparateDescription ? title : icon;
+                    const cardDescription = hasSeparateDescription || hasIcon ? description : title;
                     return `<article class="challenge-card"><div class="icon" aria-hidden="true">${singleEmoji(hasIcon ? icon : '', challengeIcons[index % challengeIcons.length])}</div><h3>${escapeHtml(cardTitle)}</h3><p>${escapeHtml(cardDescription)}</p></article>`;
                 }).join('');
             }

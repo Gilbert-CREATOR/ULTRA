@@ -29,7 +29,7 @@
         ultrasoft: [
             { value: '10+', label: 'proyectos completados', description: 'Soluciones entregadas' },
             { value: '4.9/5', label: 'valoración promedio', description: 'Experiencias verificadas' },
-            { value: '5+', label: 'años de experiencia', description: 'Tecnología con criterio' },
+            { value: '25+', label: 'años de experiencia', description: 'Tecnología con criterio' },
             { value: '99%', label: 'clientes satisfechos', description: 'Relaciones de largo plazo' }
         ]
     };
