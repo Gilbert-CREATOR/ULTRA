@@ -239,13 +239,32 @@ body {
 .hero-visual-orbit::before { inset: 14%; }
 .hero-visual-orbit::after { inset: 31%; background: rgba(202,255,74,.05); }
 
-.hero-visual-orbit strong {
+.hero-visual-brand {
     position: relative;
     z-index: 2;
-    color: var(--us-acid);
-    font-size: clamp(34px, 5vw, 62px);
-    line-height: .8;
-    letter-spacing: -.06em;
+    display: flex;
+    width: 210px;
+    min-height: 180px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px solid rgba(14, 57, 176, .08);
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(5, 28, 93, .2);
+}
+
+.hero-visual-brand img {
+    width: 76px;
+    height: 76px;
+}
+
+.hero-visual-brand strong {
+    color: #0e39b0;
+    font-size: 21px;
+    line-height: 1;
+    letter-spacing: -.04em;
     text-align: center;
 }
 
@@ -1042,5 +1061,50 @@ body {
 @media (max-width: 760px) {
     .ultrasoft-page .timeline-step {
         min-height: 250px !important;
+    }
+}
+
+.ultrasoft-page .timeline-grid {
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    overflow: visible;
+    padding: 0;
+    scroll-snap-type: none;
+}
+
+.ultrasoft-page .timeline-step {
+    min-width: 0;
+    min-height: 250px !important;
+    padding: 22px !important;
+    border-radius: 18px;
+}
+
+.ultrasoft-page .timeline-step h3 {
+    margin-top: 8px !important;
+    font-size: clamp(18px, 1.6vw, 22px);
+}
+
+.ultrasoft-page .timeline-step p {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+@media (max-width: 900px) {
+    .ultrasoft-page .timeline-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .ultrasoft-page .timeline-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ultrasoft-page .timeline-step {
+        min-height: 0 !important;
+        padding: 20px !important;
     }
 }

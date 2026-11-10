@@ -31,7 +31,7 @@
     }
     </script>
     <link rel="stylesheet" href="/ULTRASOFT/ultrasoft.css?v=20260708-fix-layout">
-    <link rel="stylesheet" href="/ULTRASOFT/ultrasoft-premium.css?v=20260729-process-icons">
+    <link rel="stylesheet" href="/ULTRASOFT/ultrasoft-premium.css?v=20261110-ultracomp-hero-logo">
     <link rel="stylesheet" href="/GENERAL/scroll-testimonials.css?v=20260708-fix-layout">
     <link rel="stylesheet" href="/GENERAL/ultra-intro.css?v=20260720-mobile-intro-fit">
     <script defer src="/GENERAL/ultra-intro.js?v=20260720-mobile-intro-fit"></script>
@@ -77,7 +77,10 @@
                         <span>APPS</span>
                         <span>ERP</span>
                         <span>IA</span>
-                        <strong>ULTRA<br>SOFT</strong>
+                        <div class="hero-visual-brand">
+                            <img src="/GENERAL/logo-ultrasoft.svg" alt="">
+                            <strong>ULTRACOMP</strong>
+                        </div>
                     </div>
                     <p>Diseño · Desarrollo · Automatización</p>
                 </div>
@@ -121,6 +124,8 @@
                     <article class="solution-card"><div class="solution-icon">🤖</div><h3>Automatización de Procesos</h3><p>Flujos automatizados que eliminan tareas repetitivas y reducen errores operativos.</p><a href="#contact" class="text-link">Solicitar servicio</a></article>
                     <article class="solution-card"><div class="solution-icon">🔗</div><h3>Integraciones de Sistemas</h3><p>Conectamos tus herramientas para que trabajen juntas y compartan información en tiempo real.</p><a href="#contact" class="text-link">Solicitar servicio</a></article>
                     <article class="solution-card"><div class="solution-icon">📈</div><h3>Consultoría Tecnológica</h3><p>Plan estratégico para digitalizar tu negocio con soluciones adaptadas a tu industria.</p><a href="#contact" class="text-link">Solicitar servicio</a></article>
+                    <article class="solution-card"><div class="solution-icon">🧾</div><h3>Facturación Electrónica</h3><p>Emite y administra tus comprobantes fiscales de forma ágil, organizada y segura.</p><a href="#contact" class="text-link">Solicitar servicio</a></article>
+                    <article class="solution-card"><div class="solution-icon">💸</div><h3>Sistema de Cuentas por Pagar</h3><p>Controla facturas de proveedores, vencimientos y pagos desde un solo sistema.</p><a href="#contact" class="text-link">Solicitar servicio</a></article>
                 </div>
             </div>
         </section>
@@ -259,7 +264,7 @@
 
     <script src="./ultrasoft.js"></script>
     <script src="/GENERAL/scroll-testimonials.js?v=20261110-years25"></script>
-    <script src="/GENERAL/site-content.js?v=20261110-challenge-content"></script>
+    <script src="/GENERAL/site-content.js?v=20261110-admin-shortcut"></script>
     <script>
         async function applyAdminContent() {
             try {
@@ -291,8 +296,14 @@
                 if (ultrasoft && Array.isArray(ultrasoft.soluciones) && ultrasoft.soluciones.length) {
                     const solutionGrid = document.querySelector('.solution-grid');
                     if (solutionGrid) {
-                        const solutionIcons = ['🧩', '📈', '📦', '💳', '👥', '🧾'];
-                        solutionGrid.innerHTML = ultrasoft.soluciones.map((item, index) => `
+                        const solutionIcons = ['🧩', '📈', '📦', '💳', '👥', '🧾', '🧾', '💸'];
+                        const solutions = [...ultrasoft.soluciones];
+                        ['Facturación Electrónica', 'Sistema de Cuentas por Pagar'].forEach(requiredSolution => {
+                            if (!solutions.some(item => String(item).trim().toLocaleLowerCase('es') === requiredSolution.toLocaleLowerCase('es'))) {
+                                solutions.push(requiredSolution);
+                            }
+                        });
+                        solutionGrid.innerHTML = solutions.map((item, index) => `
                             <article class="solution-card">
                                 <div class="solution-icon" aria-hidden="true">${solutionIcons[index % solutionIcons.length]}</div>
                                 <h3>${escapeAdminText(item)}</h3>

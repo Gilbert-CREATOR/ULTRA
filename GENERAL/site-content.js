@@ -22,6 +22,33 @@
     const workflowIcons = ['🤝', '🔎', '🎨', '💻', '🧪', '🚀', '🛟'];
     const advantageIcons = ['🧩', '💡', '📈', '🛟', '🔒', '🏢'];
 
+    document.querySelectorAll('.site-footer p:first-child, footer .footer-inner p:first-child').forEach(element => {
+        let clickCount = 0;
+        let resetTimer;
+        const activate = () => {
+            clickCount += 1;
+            clearTimeout(resetTimer);
+            if (clickCount >= 5) {
+                window.location.assign('/admin');
+                return;
+            }
+            resetTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 2000);
+        };
+
+        element.setAttribute('role', 'button');
+        element.setAttribute('aria-label', 'Acceso al panel administrativo. Haz cinco clics seguidos.');
+        element.tabIndex = 0;
+        element.addEventListener('click', activate);
+        element.addEventListener('keydown', event => {
+            if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) {
+                event.preventDefault();
+                activate();
+            }
+        });
+    });
+
     try {
         const response = await fetch('/api/content');
         if (!response.ok) return;

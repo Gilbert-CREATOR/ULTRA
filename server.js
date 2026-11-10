@@ -333,7 +333,9 @@ function getDefaultContent() {
                 'Sistema de Inventario',
                 'Sistema de Cuentas por Cobrar',
                 'Sistema de Nómina',
-                'Sistema de Contabilidad'
+                'Sistema de Contabilidad',
+                'Facturación Electrónica',
+                'Sistema de Cuentas por Pagar'
             ],
             paquetes: [
                 'Diagnóstico inicial',
